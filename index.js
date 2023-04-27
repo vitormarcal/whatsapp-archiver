@@ -8,7 +8,8 @@ const winston = require('winston');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const express = require('express');
-require('./infra/db-manager').initDB()
+const dbManager = require('./infra/db-manager')
+dbManager.initDB()
 
 const logger = winston.createLogger({
     transports: [
