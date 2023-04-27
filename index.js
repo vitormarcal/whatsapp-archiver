@@ -1,6 +1,8 @@
 'use strict';
 
 const fs = require('fs');
+const AdmZip = require('adm-zip');
+const whatsapp = require('whatsapp-chat-parser');
 const path = require('path');
 const winston = require('winston');
 const morgan = require('morgan');
@@ -23,3 +25,21 @@ app.listen(3001, () => {
     logger.info('Server started on port 3001');
 });
 
+function extractZipBackup(path) {
+    const data = fs.readFileSync(path);
+    const zip = new AdmZip(data);
+    const zipEntries = zip.getEntries();
+    zipEntries.forEach(function (zipEntry) {
+        if (zipEntry.entryName.endsWith('.txt')) {
+            console.log(`Conteúdo do arquivo de texto ${zipEntry.entryName}:`);
+            const text = zipEntry.getData().toString('utf8')
+            const options = {
+                parseAttachments: true
+            }
+            const messages = whatsapp.parseString(text, options);
+            console.log(messages);
+        }
+    });
+}
+
+extractZipBackup('./example/chat.zip');
