@@ -1,27 +1,22 @@
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('banco_de_dados.sqlite');
-
+const db = new sqlite3.Database('./whatsapp_arquiver.sqlite');
+const fs = require('fs');
+const path = require("path");
 function createTables() {
-    db.serialize(() => {
-        db.run('CREATE TABLE IF NOT EXISTS messages (id INTEGER PRIMARY KEY AUTOINCREMENT, author TEXT, message TEXT)', (err) => {
-            if (err) {
-                return console.log(err.message);
-            }
-            console.log(`Table created`);
-        });
-
-        const stmt = db.prepare("INSERT INTO messages VALUES (? ,?, ?)");
-        for (let i = 0; i < 10; i++) {
-            stmt.run(i, "Ipsum " + i, "Ipsum " + 1);
+    const creaateTableFile = path.join(__dirname, './migrations/create_table.sql')
+    fs.readFile(creaateTableFile, 'utf8', (err, sql) => {
+        if (err) {
+            throw err;
         }
-        stmt.finalize();
-
-        db.each("SELECT rowid AS id, author, message  FROM messages", (err, row) => {
-            console.log(row);
+        db.serialize(() => {
+            db.run(sql, (err) => {
+                if (err) {
+                    throw err;
+                }
+                console.log('Tabelas criadas com sucesso!');
+            });
         });
     });
-
-    db.close();
 }
 
 createTables();
