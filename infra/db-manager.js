@@ -14,7 +14,7 @@ function createTables() {
                     throw err;
                 }
                 console.log('Tabelas criadas com sucesso!');
-                db.close();
+               // db.close();
             });
         });
     });
