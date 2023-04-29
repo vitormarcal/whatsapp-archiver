@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS attachment (
 CREATE TABLE IF NOT EXISTS message_item (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     author TEXT NULL,
-    message_content TEXT NULL,
+    message_content TEXT NOT NULL,
     chat_id INTEGER NOT NULL,
     attachment_id INTEGER NULL,
     date TEXT NOT NULL,
