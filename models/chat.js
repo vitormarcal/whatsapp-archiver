@@ -8,10 +8,6 @@ Chat.init({
         unique: true
     },
     attachmentDir: DataTypes.STRING,
-    createdAt: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW
-    }
-}, { sequelize, modelName: 'chat' });
+}, { sequelize, modelName: 'chat', createdAt: true });
 
 module.exports = { Chat }

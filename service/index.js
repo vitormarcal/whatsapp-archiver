@@ -1,8 +1,8 @@
 const ChatImporterService = require('./chat.importer.service').ChatImporterService
-const MessageService = require('./message.service').MessageService
+const ChatService = require('./chat.service').ChatService
 
 
 module.exports = {
     ChatImporterService,
-    MessageService
+    ChatService
 }
