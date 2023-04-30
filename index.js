@@ -13,13 +13,13 @@ const logger = winston.createLogger({
     ],
 });
 
-const messagesApi = require('./api/message.api')
+const chatsApi = require('./api/chat.api')
 
 const app = express();
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(morgan('common', {stream: fs.createWriteStream(path.join(__dirname, 'app.log'), {flags: 'a'})}));
-app.use("/messages", messagesApi)
+app.use("/chats", chatsApi)
 
 app.listen(3001, () => {
     logger.info('Server started on port 3001');

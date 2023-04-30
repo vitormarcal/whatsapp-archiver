@@ -2,12 +2,12 @@ const fs = require('fs');
 const express = require('express');
 const path = require("path");
 const router = express.Router();
-const { ChatImporterService, MessageService } = require('../service/index');
+const {ChatImporterService, ChatService} = require('../service/index');
 const chatImportService = new ChatImporterService();
-const messageService = new MessageService();
+const chatService = new ChatService();
 
 router.get("/", function (req, res) {
-    res.send("messages");
+    res.send(["all chats"]);
 });
 
 router.get("/force-import", function (req, res) {
@@ -15,13 +15,19 @@ router.get("/force-import", function (req, res) {
     const filePath = chatDir + '/chat.zip'
     const dataBuffer = fs.readFileSync(filePath);
     const messages = chatImportService.import(dataBuffer)
-    messageService.save(messages, chatDir).then(r => {
-        console.log(r)
-        res.send("imported");
+    chatService.saveAll(messages, chatDir).then(saved => {
+        console.log(saved)
+        res.send(saved);
     }).catch(e => {
-        console.log(r)
+        console.log(e)
         res.send("error");
     })
+});
+
+router.get("/:id", function (req, res) {
+    const id = req.params.id
+
+    res.send({id});
 });
 
 module.exports = router;
