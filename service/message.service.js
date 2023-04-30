@@ -12,12 +12,10 @@ class MessageService {
         return authors.join('#');
     }
 
-    async findOrCreateChat(chatName, attachmentPath) {
+    async findOrCreateChat(chatName, attachmentDir) {
         const [chat, created] = await Chat.findOrCreate({
             where: { name: chatName },
-            defaults: {
-                attachmentDir: attachmentPath,
-            },
+            defaults: { attachmentDir },
         });
         return [chat, created];
     }
