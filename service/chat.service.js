@@ -2,32 +2,19 @@ const {Chat, Message} = require('../models');
 
 class ChatService {
     constructor() {
-    }
+        this.findChat = async (id) => (await Chat.findByPk(id))?.toJSON();
 
-    chatName(messages = []) {
-        const authors = [...new Set(messages.map(message => message.author))]
-            .filter(author => author !== null)
-        authors.sort();
-        return authors.join('#');
-    }
+        this.chatName = (messages = []) => [...new Set(messages.map(message => message.author))]
+            .filter(author => author !== null).sort().join('#');
 
-    async findOrCreateChat(chatName, attachmentDir) {
-        return Chat.findOrCreate({
+        this.findOrCreateChat = async (chatName, attachmentDir) => (await Chat.findOrCreate({
             where: {name: chatName},
             defaults: {attachmentDir},
-        }).then(([chat, created]) => {
-            if (created) console.log(chat.toJSON())
-            return chat
-        }).catch(e => {
-            console.error(`findOrCreate fails to ${chatName}`, e)
-            throw e
-        });
-
+        }))[0];
     }
 
     async saveAll(messages, attachmentPath) {
-        let chatName = this.chatName(messages);
-        const chat = await this.findOrCreateChat(chatName, attachmentPath);
+        const chat = await this.findOrCreateChat(this.chatName(messages), attachmentPath);
 
         const messagesToSave = messages.map(messageData => {
             return {
@@ -38,9 +25,10 @@ class ChatService {
                 chatId: chat.id
             }
         })
-        const result = chat.toJSON()
-        result.messages = (await Message.bulkCreate(messagesToSave)).map(i => i.toJSON())
-        return result
+        return {
+            ...chat.toJSON(),
+            messages: (await Message.bulkCreate(messagesToSave)).map(i => i.toJSON())
+        }
     }
 
 }

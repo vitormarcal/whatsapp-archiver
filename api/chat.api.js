@@ -25,9 +25,14 @@ router.get("/force-import", function (req, res) {
 });
 
 router.get("/:id", function (req, res) {
-    const id = req.params.id
-
-    res.send({id});
+    let id = req.params.id;
+    chatService.findChat(id).then(chat => {
+        if (chat) res.send(chat)
+        else res.sendStatus(404)
+    }).catch(error => {
+        console.error(`Erro ao buscar chat ${id}`, error);
+        res.sendStatus(500);
+    });
 });
 
 module.exports = router;
