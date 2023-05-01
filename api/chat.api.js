@@ -29,13 +29,24 @@ router.get("/force-import", function (req, res) {
     })
 });
 
-router.get("/:id", function (req, res) {
-    let id = req.params.id;
-    chatService.findChat(id).then(chat => {
+router.get("/:chatId", function (req, res) {
+    let chatId = req.params.chatId;
+    chatService.findChat(chatId).then(chat => {
         if (chat) res.send(chat)
         else res.sendStatus(404)
     }).catch(error => {
-        console.error(`Erro ao buscar chat ${id}`, error);
+        console.error(`Erro ao buscar chat ${chatId}`, error);
+        res.sendStatus(500);
+    });
+});
+
+router.get("/:chatId/messages", function (req, res) {
+    let chatId = req.params.chatId;
+    chatService.findMessagesByChatId(chatId).then(messages => {
+        if (messages) res.send(messages)
+        else res.sendStatus(404)
+    }).catch(error => {
+        console.error(`Erro ao buscar mensagens ${chatId}`, error);
         res.sendStatus(500);
     });
 });
