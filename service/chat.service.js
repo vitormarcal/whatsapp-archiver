@@ -8,7 +8,7 @@ class ChatService {
 
         this.findOrCreateChat = async (chatName, attachmentDir) => (await Chat.findOrCreate({
             where: {name: chatName},
-            defaults: {attachmentDir},
+            defaults: {attachmentDir: `${attachmentDir}/${chatName}`},
         }))[0];
     }
 
