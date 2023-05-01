@@ -2,7 +2,6 @@ const {Chat, Message} = require('../models');
 
 class ChatService {
     constructor() {
-        this.findChat = async (id) => (await Chat.findByPk(id))?.toJSON();
 
         this.chatName = (messages = []) => [...new Set(messages.map(message => message.author))]
             .filter(author => author !== null).sort().join('#');
@@ -27,10 +26,31 @@ class ChatService {
         })
         return {
             ...chat.toJSON(),
-            messages: (await Message.bulkCreate(messagesToSave)).map(i => i.toJSON())
+            messages: (await Message.bulkCreate(messagesToSave)).map(it => it.toJSON())
         }
     }
 
+    async findChat(id) {
+
+        const chat = (await Chat.findByPk(id))?.toJSON()
+        if (!chat) return null
+        else {
+            chat['amountOfMessages'] = await Message.count({
+                where: {
+                    chatId: chat.id
+                }
+            })
+            return chat
+        }
+    }
+
+    async findAll() {
+        const {count, rows} = (await Chat.findAndCountAll())
+        return {
+            count,
+            data: rows.map(it => it.toJSON())
+        }
+    }
 }
 
 

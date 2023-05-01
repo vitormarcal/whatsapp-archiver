@@ -7,7 +7,12 @@ const chatImportService = new ChatImporterService();
 const chatService = new ChatService();
 
 router.get("/", function (req, res) {
-    res.send(["all chats"]);
+    chatService.findAll().then(chats => {
+        res.send(chats);
+    }).catch(e => {
+        console.log(e)
+        res.send("error");
+    })
 });
 
 router.get("/force-import", function (req, res) {
