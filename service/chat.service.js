@@ -44,6 +44,18 @@ class ChatService {
         }
     }
 
+    async findMessagesByChatId(chatId) {
+        const {count, rows} = await Message.findAndCountAll({
+            where: {
+                chatId: chatId
+            }
+        })
+        return {
+            count,
+            data: rows.map(it => it.toJSON())
+        }
+    }
+
     async findAll() {
         const {count, rows} = (await Chat.findAndCountAll())
         return {
