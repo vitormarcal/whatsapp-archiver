@@ -16,11 +16,7 @@ router.get("/", function (req, res) {
 });
 
 router.get("/force-import", function (req, res) {
-    const chatDir = path.join(__dirname, '../example')
-    const filePath = chatDir + '/chat.zip'
-    const dataBuffer = fs.readFileSync(filePath);
-    const messages = chatImportService.import(dataBuffer)
-    chatService.saveAll(messages, chatDir).then(saved => {
+    chatImportService.doImport().then(saved => {
         console.log(saved)
         res.send(saved);
     }).catch(e => {
