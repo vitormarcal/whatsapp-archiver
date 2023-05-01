@@ -54,9 +54,9 @@ class ChatImporterService {
             })
 
             return Promise.all(saveAllPromises)
-                .then((messages) => {
+                .then((chats) => {
                     console.log('Todos os arquivos foram salvos com sucesso!');
-                    return messages
+                    return chats
                 })
                 .catch((err) => {
                     console.log('Erro ao salvar arquivos:', err);
