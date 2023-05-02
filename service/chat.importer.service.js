@@ -60,56 +60,67 @@ class ChatImporterService {
 
     }
 
-    async doImport() {
-        const previousFiles = fs.readdirSync(srcDir)
-        await util.promisify(setTimeout)(1000); // espera por 1 segundos
-        const files = fs.readdirSync(srcDir)
+    async doImport(sourceDir) {
+        const finalSrcDir = sourceDir || srcDir
 
-        if (files.length !== previousFiles.length || !files.every((file, index) => file === previousFiles[index])) {
-            // Alguma alteração foi detectada
-            console.log('Arquivos alterados:', files);
-            throw new Error("Esse diretório está em escrita, tente novamente.")
-        } else {
-            if (files.find(it => it.includes('.txt'))) {
-                this.zipAll()
-                return this.doImport()
-            }
+        this.organize(finalSrcDir);
+        const files = fs.readdirSync(finalSrcDir)
 
-            const filesPath = files.filter(it => it.includes(".zip")).map(it => `${srcDir}/${it}`)
+        const filesPath = files.filter(it => it.includes(".zip")).map(it => `${finalSrcDir}/${it}`)
 
-            const saveAllPromises = filesPath.map(filePath => {
-                const dataBuffer = fs.readFileSync(filePath);
-                const {messages, zipEntriesFiles} = this.parseMessages(dataBuffer)
+        const saveAllPromises = filesPath.map(filePath => {
+            const dataBuffer = fs.readFileSync(filePath);
+            const {messages, zipEntriesFiles} = this.parseMessages(dataBuffer)
 
-                return {zipEntriesFiles, messages: messages, filePath}
-            }).map(({messages, zipEntriesFiles, filePath}) => {
-                return chatService.saveAll(messages, archiveDir).then(chat => {
-                    this.performArchivingFiles(chat, zipEntriesFiles)
-                    return chat
-                })
+            return {zipEntriesFiles, messages: messages, filePath}
+        }).map(({messages, zipEntriesFiles, filePath}) => {
+            return chatService.saveAll(messages, archiveDir).then(chat => {
+                this.performArchivingFiles(chat, zipEntriesFiles)
+                return chat
             })
+        })
 
-            return Promise.all(saveAllPromises)
-                .then((chats) => {
-                    console.log('Todos os arquivos foram salvos com sucesso!');
-                    return chats
-                })
-                .catch((err) => {
-                    console.log('Erro ao salvar arquivos:', err);
-                    throw err
-                });
-
-        }
+        return Promise.all(saveAllPromises)
+            .then((chats) => {
+                console.log('Todos os arquivos foram salvos com sucesso!');
+                return chats
+            })
+            .catch((err) => {
+                console.log('Erro ao salvar arquivos:', err);
+                throw err
+            });
 
     }
 
-    zipAll() {
+    organize(sourceDir) {
+
+        const files = fs.readdirSync(sourceDir)
+        if (files.find(it => it.includes('.txt'))) {
+            this.zipAll(sourceDir)
+        }
+
+        try {
+            fs.readdirSync(sourceDir).map(it =>  `${sourceDir}/${it}`).forEach(filePath => {
+                const stats = fs.statSync(filePath);
+                if (stats.isDirectory()) {
+                    this.organize(filePath)
+                }
+            })
+
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    zipAll(srcDir) {
         const zip = new AdmZip();
         const zipFilePath = `${srcDir}/zipped.zip`
+        const filesToRemove = []
         fs.readdirSync(srcDir).forEach(file => {
             const filePath = path.join(srcDir, file);
             const stats = fs.statSync(filePath);
             if (stats.isFile()) {
+                filesToRemove.push(filePath)
                 zip.addLocalFile(filePath);
             }
         });
@@ -118,7 +129,7 @@ class ChatImporterService {
 
         fs.readdirSync(srcDir).forEach(file => {
             const filePath = path.join(srcDir, file);
-            if (filePath !== zipFilePath) {
+            if (filesToRemove.find(it => it === filePath)) {
                 fs.unlinkSync(filePath);
                 console.log('Arquivo removido:', filePath);
             }
