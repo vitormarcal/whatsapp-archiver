@@ -1,4 +1,4 @@
-const {Chat, Message} = require('../models');
+const {Chat, Message, sequelize} = require('../models');
 
 class ChatService {
     constructor() {
@@ -6,28 +6,52 @@ class ChatService {
         this.chatName = (messages = []) => [...new Set(messages.map(message => message.author))]
             .filter(author => author !== null).sort().join('#');
 
-        this.findOrCreateChat = async (chatName, attachmentDir) => (await Chat.findOrCreate({
-            where: {name: chatName},
-            defaults: {attachmentDir: `${attachmentDir}/${chatName}`},
-        }))[0];
+        this.findOrCreateChat = async (chatName, attachmentDir, transaction) => {
+            console.log(`Chat.findOrCreate chatName: ${chatName}`)
+            let chat = await Chat.findOne({where: {name: chatName}});
+            if (!chat) {
+                chat = await Chat.create({
+                    name: chatName,
+                    attachmentDir: `${attachmentDir}/${chatName}`
+                }, {transaction});
+            }
+            return chat;
+        };
     }
 
-    async saveAll(messages, attachmentPath) {
-        const chat = await this.findOrCreateChat(this.chatName(messages), attachmentPath);
-
-        const messagesToSave = messages.map(messageData => {
-            return {
-                author: messageData.author,
-                content: messageData.message,
-                date: messageData.date,
-                attachmentName: messageData.attachment?.fileName,
-                chatId: chat.id
-            }
+    async saveAll(messages, attachmentPath, chatName) {
+        return sequelize.transaction(async (transaction) => {
+            return this.findOrCreateChat(chatName || this.chatName(messages), attachmentPath)
+                .then(chat => {
+                    return {
+                        chat,
+                        messagesToSave: messages.map(messageData => {
+                            return {
+                                author: messageData.author,
+                                content: messageData.message,
+                                date: messageData.date,
+                                attachmentName: messageData.attachment?.fileName,
+                                chatId: chat.id
+                            }
+                        })
+                    }
+                })
+                .then(({chat, messagesToSave}) => {
+                    console.log(`Message::bulkCreate start, chatName: ${chatName}`)
+                    return Message.bulkCreate(messagesToSave, {
+                        transaction
+                    })
+                        .then(messageSaved => messageSaved.map(it => it.toJSON()))
+                        .then(it => {
+                            return {
+                                ...chat.toJSON(),
+                                messages: it
+                            }
+                        })
+                })
         })
-        return {
-            ...chat.toJSON(),
-            messages: (await Message.bulkCreate(messagesToSave)).map(it => it.toJSON())
-        }
+
+
     }
 
     async findChat(id) {
