@@ -15,5 +15,6 @@ sequelize.sync()
 
 module.exports = {
     Chat,
-    Message
+    Message,
+    sequelize
 };
