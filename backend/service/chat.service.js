@@ -1,4 +1,5 @@
 const {Chat, Message, sequelize} = require('../models');
+const fs = require("fs");
 
 class ChatService {
     constructor() {
@@ -55,7 +56,7 @@ class ChatService {
     }
 
     async findChat(id) {
-                const chat = (await Chat.findOne({
+        const chat = (await Chat.findOne({
             where: {id: id},
             attributes: {
                 include: [
@@ -133,6 +134,31 @@ class ChatService {
                 return response
             })
         }
+    }
+
+    async findAttachmentBy(messageId) {
+        return Message.findOne({
+            where: {id: messageId},
+            include: [{model: Chat}]
+        }).then(message => {
+            if (!message || !message.attachmentName) {
+                return null
+            }
+
+            const filePath = `${message.chat.attachmentDir}/${message.attachmentName}`
+
+            return new Promise((resolve, reject) => {
+                fs.readFile(filePath, (err, dataBuffer) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+
+                        resolve(dataBuffer)
+                    }
+                })
+            });
+
+        });
     }
 }
 
