@@ -13,7 +13,7 @@ export default {
   name: 'IndexPage',
     data() {
       return {
-          myName: 'Vítor Marçal'
+          myName: 'Vítor  Marçal'
       }
     },
     async asyncData({ $axios }) {
