@@ -3,7 +3,7 @@
         <div class="message-id">{{ message.id }}</div>
         <div>
             <div class="author">{{ message.author }}</div>
-            <div class="message-content">{{ message.content }}</div>
+            <div class="message-content" v-html="safeContent"></div>
             <div v-if="attachmentUrl" class="attachment">
                 <img v-if="isImageAttachment" :src="attachmentUrl" />
                 <video v-else-if="isVideoAttachment" :src="attachmentUrl" controls />
@@ -19,6 +19,12 @@
 export default {
     props: ['message', 'myName'],
     computed: {
+        safeContent() {
+            return this.message.content.replace(
+                /https?:\/\/[^\s]+/g,
+                '<a href="$&" target="_blank">$&</a>'
+            );
+        },
         attachmentUrl() {
             if (this.message?.attachmentName) {
                 return `http://localhost:3000/api/messages/${this.message.id}/attachment`
@@ -42,7 +48,7 @@ export default {
             return this.message.attachmentName && /\.(pdf)$/i.test(this.message.attachmentName)
         },
         formattedDate() {
-            return new Date(this.message.createdAt).toUTCString()
+            return new Date(this.message.date).toUTCString()
         },
         isMyMessage() {
             return this.message.author === this.myName
