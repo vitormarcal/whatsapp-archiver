@@ -59,12 +59,23 @@ class ChatService {
         const chat = (await Chat.findByPk(id))?.toJSON()
         if (!chat) return null
         else {
-            chat['amountOfMessages'] = await Message.count({
+            const countPromise = Message.count({
                 where: {
                     chatId: chat.id
                 }
             })
-            return chat
+
+            const findLastPromise = Message.findOne({
+                where: {
+                    chatId: chat.id
+                },
+                order: [['id', 'DESC']]
+            })
+            return Promise.all([countPromise, findLastPromise]).then(([amountOfMessages, lastMessage]) => {
+                chat['amountOfMessages'] = amountOfMessages
+                chat['lastMessage'] = lastMessage
+                return chat
+            })
         }
     }
 
