@@ -1,5 +1,5 @@
 <template>
-    <div id="chat-list">
+    <div id="chat-list" class="col-12 col-sm-5 col-md-4 d-flex flex-column">
         <template v-for="item in chats.data">
             <ChatItem :item="item" :my-name="myName" :active-chat="activeChat"
                       v-on:update:active-chat="handleItemClicked"/>

@@ -1,13 +1,16 @@
 <template>
 
-    <div class="container-fluid">
-        <ChatList :chats="chats"
-                  :my-name="myName"
-                  :active-chat="activeChat"
-                  v-on:update:message-area="refreshMessageArea"/>
+    <main  class="container-fluid">
+        <div class="row h-100">
+            <ChatList :chats="chats"
+                      :my-name="myName"
+                      :active-chat="activeChat"
+                      v-on:update:message-area="refreshMessageArea"/>
 
-        <MessageArea :my-name="myName" :active-chat="activeChat"/>
-    </div>
+            <MessageArea :my-name="myName" :active-chat="activeChat"/>
+        </div>
+
+    </main>
 
 </template>
 
@@ -32,3 +35,9 @@ export default {
     }
 }
 </script>
+<style>
+main {
+    width: 100vw;
+    height: 100vh;
+}
+</style>
