@@ -1,5 +1,7 @@
 <template>
-    <div class="chat-item d-flex flex-row p-2 w-100 border-bottom  ">
+    <div class="chat-item d-flex flex-row p-2 w-100 border-bottom"
+         @click="toggleActive()"
+         :class="{ 'active': item.id === activeChat.id }">
         <img src="/default-profile-image.png" alt="Profile Photo" class="img-fluid rounded-circle mr-2"
              style="height:50px;">
         <div class="w-50">
@@ -19,9 +21,24 @@
 </template>
 <script>
 export default {
-    props: ['item', 'myName'],
+    props: ['item', 'myName', 'activeChat'],
     created() {
         console.log(this.item)
+    },
+    methods: {
+        toggleActive() {
+            this.$emit('update:active-chat', this.item)
+        }
     }
 }
 </script>
+<style>
+.chat-item {
+    cursor: pointer;
+    background: white;
+}
+
+.active {
+    background: hsl(0, 0%, 90%);
+}
+</style>
