@@ -6,6 +6,7 @@
             <div class="name">{{ item.name }}</div>
             <div class="small">
                 <i class="far fa-check-circle mr-1"></i>
+                <b-icon icon="check2-all " v-if="item.lastMessage.author === myName"></b-icon>
                 {{ item.lastMessage.content }}
             </div>
         </div>

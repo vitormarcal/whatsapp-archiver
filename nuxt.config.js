@@ -41,6 +41,11 @@ export default {
     '@nuxtjs/pwa',
   ],
 
+  bootstrapVue: {
+    // Install the `IconsPlugin` plugin (in addition to `BootstrapVue` plugin)
+    icons: true
+  },
+
   serverMiddleware: {
     '/api': '~/backend'
   },
