@@ -1,7 +1,7 @@
 <template>
     <div id="chat-list">
         <template v-for="item in chats.data">
-            <ChatItem :item="item"/>
+            <ChatItem :item="item" :my-name="myName"/>
         </template>
 
     </div>
@@ -9,7 +9,7 @@
 <script>
 
 export default {
-    props: ['chats'],
+    props: ['chats', 'myName'],
     created() {
     }
 }

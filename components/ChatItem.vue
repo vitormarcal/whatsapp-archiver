@@ -3,19 +3,22 @@
         <img src="/default-profile-image.png" alt="Profile Photo" class="img-fluid rounded-circle mr-2"
              style="height:50px;">
         <div class="w-50">
-            <div class="name">Fulano</div>
-            <div class="small">Lorem ipsum dolor sit amet, consectetur adipiscing elit</div>
+            <div class="name">{{ item.name }}</div>
+            <div class="small">
+                <i class="far fa-check-circle mr-1"></i>
+                {{ item.lastMessage.content }}
+            </div>
         </div>
         <div class="flex-grow-1 text-right">
-            <div class="small">27/03/2018</div>
-            <div class="badge badge-success badge-pill small">10</div>
+            <div class="small">{{ item.lastMessage.createdAt }}</div>
+            <div class="badge badge-success badge-pill small">{{ item.messagesCount }}</div>
         </div>
 
     </div>
 </template>
 <script>
 export default {
-    props: ['item'],
+    props: ['item', 'myName'],
     created() {
         console.log(this.item)
     }
