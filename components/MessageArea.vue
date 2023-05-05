@@ -1,5 +1,5 @@
 <template>
-    <div class="message-area d-flex flex-column">
+    <div class="message-area d-none d-sm-flex flex-column col-12 col-sm-7 col-md-8 p-0 h-100">
         <template v-for="message in messages">
             <message-item :message="message" :my-name="myName"/>
         </template>
@@ -35,5 +35,6 @@ export default {
 
     background-color: rgb(13, 20, 24);
     background-image: url("/bg-dark.png");
+    border-left: 1px solid white;
 }
 </style>
