@@ -1,16 +1,14 @@
 <template>
-    <div id="message-area">
-        <div class="messages">
-            <div v-for="message in messages" :key="message.id">
-                {{ message.content }}
-            </div>
-        </div>
+    <div class="message-area d-flex flex-column">
+        <template v-for="message in messages">
+            <message-item :message="message" :my-name="myName"/>
+        </template>
     </div>
 </template>
 <script>
 
 export default {
-    props: ['activeChat'],
+    props: ['activeChat', 'myName'],
     data() {
         return {
             messages: [],
@@ -26,8 +24,16 @@ export default {
         },
     },
     async created() {
-        //await this.getMessages()
     }
 }
 
 </script>
+<style>
+.message-area {
+    flex: 1 !important;
+    overflow: auto;
+
+    background-color: rgb(13, 20, 24);
+    background-image: url("/bg-dark.png");
+}
+</style>
