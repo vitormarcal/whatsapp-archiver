@@ -55,27 +55,39 @@ class ChatService {
     }
 
     async findChat(id) {
-
-        const chat = (await Chat.findByPk(id))?.toJSON()
+                const chat = (await Chat.findOne({
+            where: {id: id},
+            attributes: {
+                include: [
+                    [
+                        sequelize.literal(`(
+                            SELECT COUNT(*)
+                            FROM messages AS message
+                            WHERE 0=0
+                                AND message.chatId = chat.id
+                        )`),
+                        'messagesCount'
+                    ]
+                ]
+            },
+            include: [
+                {
+                    model: Message,
+                    attributes: [
+                        'id',
+                        'content',
+                        'createdAt',
+                    ],
+                    order: [['id', 'DESC']],
+                    limit: 1,
+                },
+            ],
+        }))?.toJSON()
         if (!chat) return null
         else {
-            const countPromise = Message.count({
-                where: {
-                    chatId: chat.id
-                }
-            })
-
-            const findLastPromise = Message.findOne({
-                where: {
-                    chatId: chat.id
-                },
-                order: [['id', 'DESC']]
-            })
-            return Promise.all([countPromise, findLastPromise]).then(([amountOfMessages, lastMessage]) => {
-                chat['amountOfMessages'] = amountOfMessages
-                chat['lastMessage'] = lastMessage
-                return chat
-            })
+            chat.lastMessage = chat.messages[0]
+            delete chat.messages;
+            return chat
         }
     }
 
@@ -92,10 +104,34 @@ class ChatService {
     }
 
     async findAll() {
-        const {count, rows} = (await Chat.findAndCountAll())
+        const {count, rows} = (await Chat.findAndCountAll({
+            attributes: {
+                include: [
+                    [
+                        sequelize.literal(`(
+                            SELECT COUNT(*)
+                            FROM messages AS message
+                            WHERE 0=0
+                                AND message.chatId = chat.id
+                        )`),
+                        'messagesCount'
+                    ]
+                ]
+            },
+            include: [{
+                model: Message,
+                order: [['id', 'DESC']],
+                limit: 1
+            }]
+        }))
         return {
             count,
-            data: rows.map(it => it.toJSON())
+            data: rows.map(chat => {
+                const response = chat.toJSON()
+                response.lastMessage = response.messages[0];
+                delete response.messages;
+                return response
+            })
         }
     }
 }
