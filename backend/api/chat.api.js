@@ -2,7 +2,7 @@ const fs = require('fs');
 const express = require('express');
 const path = require("path");
 const router = express.Router();
-const {ChatImporterService, ChatService} = require('../service/index');
+const {ChatImporterService, ChatService} = require('../service');
 const chatImportService = new ChatImporterService();
 const chatService = new ChatService();
 

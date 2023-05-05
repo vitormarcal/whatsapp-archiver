@@ -103,7 +103,6 @@ dist
 
 # vuepress v2.x temp and cache directory
 .temp
-.cache
 
 # Docusaurus cache and generated files
 .docusaurus
@@ -133,4 +132,25 @@ dist
 .idea
 whatsapp
 *.sqlite
+
+
+# Created by .ignore support plugin (hsz.mobi)
+### Node template
+# Logs
+/logs
+
+
+# TypeScript v1 declaration files
+typings/
+
+
+# Service worker
+sw.*
+
+# macOS
+.DS_Store
+
+# Vim swap files
+*.swp
+
 

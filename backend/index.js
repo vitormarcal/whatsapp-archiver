@@ -21,6 +21,15 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(morgan('common', {stream: fs.createWriteStream(path.join(__dirname, 'app.log'), {flags: 'a'})}));
 app.use("/chats", chatsApi)
 
-app.listen(3001, () => {
-    logger.info('Server started on port 3001');
-});
+
+module.exports = app
+
+
+// Start standalone server if directly running
+if (require.main === module) {
+    const port = process.env.PORT || 3001
+    app.listen(port, () => {
+        // eslint-disable-next-line no-console
+        console.log(`API server listening on port ${port}`)
+    })
+}
