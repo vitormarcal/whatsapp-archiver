@@ -38,7 +38,12 @@ router.get("/:chatId", function (req, res) {
 
 router.get("/:chatId/messages", function (req, res) {
     let chatId = req.params.chatId;
-    chatService.findMessagesByChatId(chatId).then(messages => {
+    const limit = parseInt(req.query.limit)
+    const offset = parseInt(req.query.offset)
+
+    if (isNaN(limit) || isNaN(offset)) res.status(400).send("O parâmetro skip e offset precisa ser um número");
+
+    chatService.findMessagesByChatId(chatId, limit, offset).then(messages => {
         if (messages) res.send(messages)
         else res.sendStatus(404)
     }).catch(error => {
@@ -46,9 +51,6 @@ router.get("/:chatId/messages", function (req, res) {
         res.sendStatus(500);
     });
 });
-
-
-
 
 
 module.exports = router;
