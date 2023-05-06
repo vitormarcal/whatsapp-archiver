@@ -1,9 +1,22 @@
 <template>
     <div class="message-area d-none d-sm-flex flex-column col-12 col-sm-7 col-md-8 p-0 h-100" ref="chatWindow"
          @scroll="loadMoreMessages">
-        <template v-for="message in messages">
-            <message-item :message="message" :my-name="myName"/>
-        </template>
+
+        <div id="navbar" class="row d-flex flex-row align-items-center p-2 m-0 w-100" v-if="showNavBar">
+            <a href="#"><img src="/default-profile-image.png" alt="Profile Photo" class="img-fluid rounded-circle mr-2"
+                             style="height:50px;" id="pic"></a>
+            <div class="d-flex flex-column">
+                <div class="text-white font-weight-bold" id="name">{{ this.activeChat.name }}</div>
+                <div class="text-white small" id="details">last seen {{ formattedDate }}</div>
+            </div>
+        </div>
+
+
+        <div class="message-list d-flex flex-column">
+            <template v-for="message in messages">
+                <message-item :message="message" :my-name="myName"/>
+            </template>
+        </div>
     </div>
 </template>
 <script>
@@ -40,7 +53,6 @@ export default {
                     } else {
                         chatWindow.scrollTop = chatWindow.scrollHeight - chatWindow.clientHeight;
                     }
-
                 })
             }
 
@@ -61,10 +73,17 @@ export default {
             return this.activeChat?.id || -1
         },
         existsChat() {
-            return this.activeChat.id !== -1
+            return this.activeChat?.id !== -1
         },
         firstQuery() {
-            return this.config[this.chatId].offset === 0
+            if (this.existsChat) return this.config[this.chatId].offset === 0
+            return true
+        },
+        formattedDate() {
+            if (this.existsChat) return new Date(this.activeChat.lastMessage.date).toUTCString()
+        },
+        showNavBar() {
+            return this.existsChat;
         }
     },
     mounted() {
@@ -84,5 +103,17 @@ export default {
     background-color: rgb(13, 20, 24);
     background-image: url("/bg-dark.png");
     border-left: 1px solid white;
+}
+
+.message-list {
+    padding-top: 6rem;
+}
+
+#navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 9999;
+    background: rgb(15, 59, 62);
 }
 </style>
