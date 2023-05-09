@@ -1,6 +1,7 @@
 const { sequelize } = require('./sequelize')
 const { Chat } = require('./chat');
 const { Message } = require('./message');
+const { Parameter } = require('./parameter');
 
 Chat.hasMany(Message, {
     foreignKey: 'chatId'
@@ -17,5 +18,6 @@ sequelize.sync()
 module.exports = {
     Chat,
     Message,
+    Parameter,
     sequelize
 };
