@@ -15,6 +15,7 @@ const logger = winston.createLogger({
 
 const chatsApi = require('./api/chat.api')
 const messagesApi = require('./api/message.api')
+const parameterApi = require('./api/parameter.api')
 
 const app = express();
 app.use(express.json());
@@ -22,6 +23,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(morgan('common', {stream: fs.createWriteStream(path.join(__dirname, 'app.log'), {flags: 'a'})}));
 app.use("/chats", chatsApi)
 app.use("/messages", messagesApi)
+app.use("/parameters", parameterApi)
 
 
 module.exports = app
