@@ -4,10 +4,10 @@ const crypto = require('crypto');
 const whatsapp = require("whatsapp-chat-parser");
 const fs = require("fs");
 const path = require("path");
-const srcDir = path.join(__dirname, '../whatsapp/srcDir')
-const archiveDir = path.join(__dirname, '../whatsapp/archiveDir')
 const ChatService = require('../service/chat.service').ChatService;
+const ParameterService = require('../service/parameter.service').ParameterService;
 const chatService = new ChatService();
+const parameterService = new ParameterService();
 const util = require('util');
 const CHAT_NAME_PROPERTIES = 'chat_name.properties'
 
@@ -19,8 +19,6 @@ class ChatImporterService {
 
             return this.findMessages(zipEntries)
         }
-
-        this.organizeAll = (sourceDir) => this.organize(sourceDir || srcDir)
     }
 
     findMessages(zipEntries) {
@@ -84,9 +82,11 @@ class ChatImporterService {
     }
 
     async doImport(sourceDir) {
-        const finalSrcDir = sourceDir || srcDir
+        const rootSourceExportDir = (await parameterService.findByName('SRC_DIR').then(it => it.value))
+        const archiveDir = (await parameterService.findByName('ARCHIVE_DIR').then(it => it.value))
+        const finalSrcDir = sourceDir || rootSourceExportDir
 
-        this.organizeAll(finalSrcDir);
+        this.organize(finalSrcDir, rootSourceExportDir);
         const files = fs.readdirSync(finalSrcDir)
 
         const filesPath = files.filter(it => it.includes(".zip")).map(it => `${finalSrcDir}/${it}`)
@@ -126,12 +126,10 @@ class ChatImporterService {
         });
     }
 
-    organize(sourceDir) {
-
-        const isRootDir = sourceDir === srcDir
-
-        const saveAndGetDirName = (sourceDir, isRootDir) => {
-            if (!isRootDir) {
+    organize(sourceDir, rootSourceExportDir) {
+        const saveAndGetDirName = (sourceDir, rootSourceExportDir) => {
+            const isRootDir = sourceDir !== rootSourceExportDir
+            if (isRootDir) {
                 const chatNamePath = `${sourceDir}/${CHAT_NAME_PROPERTIES}`
                 if (fs.existsSync(chatNamePath)) {
                     return fs.readFileSync(chatNamePath);
@@ -146,15 +144,15 @@ class ChatImporterService {
         }
 
 
-        let dirName = saveAndGetDirName(sourceDir, isRootDir);
+        let dirName = saveAndGetDirName(sourceDir, rootSourceExportDir);
 
         const files = fs.readdirSync(sourceDir)
         if (files.find(it => it.includes('.txt'))) {
-            this.zipAll(sourceDir, dirName)
+            this.zipAll(sourceDir, dirName, rootSourceExportDir)
         } else {
             const zipToMove = files.find(it => it.includes('.zip'))
             if (zipToMove) {
-                fs.renameSync(path.join(sourceDir, zipToMove), path.join(srcDir, zipToMove))
+                fs.renameSync(path.join(sourceDir, zipToMove), path.join(rootSourceExportDir, zipToMove))
             }
 
         }
@@ -164,7 +162,7 @@ class ChatImporterService {
             fs.readdirSync(sourceDir).map(it => `${sourceDir}/${it}`).forEach(filePath => {
                 const stats = fs.statSync(filePath);
                 if (stats.isDirectory()) {
-                    this.organize(filePath)
+                    this.organize(filePath, rootSourceExportDir)
                 }
             })
 
@@ -173,10 +171,10 @@ class ChatImporterService {
         }
     }
 
-    zipAll(sourceDir, dirName) {
+    zipAll(sourceDir, dirName, rootSourceExportDir) {
         const zip = new AdmZip();
         const zipName = dirName || crypto.randomBytes(20).toString('hex');
-        const zipFilePath = `${srcDir}/${zipName}.zip`
+        const zipFilePath = `${rootSourceExportDir}/${zipName}.zip`
         const filesToRemove = []
         fs.readdirSync(sourceDir).forEach(file => {
             const filePath = path.join(sourceDir, file);
