@@ -1,16 +1,14 @@
 <template>
-    <div class="message-item rounded" :class="classObject">
+    <div class="message-item rounded d-flex flex-column" :class="classObject">
         <div class="message-id">{{ message.id }}</div>
-        <div>
             <div class="author">{{ message.author }}</div>
             <div class="message-content" v-html="safeContent"></div>
             <div v-if="attachmentUrl" class="attachment">
                 <img v-if="isImageAttachment" :src="attachmentUrl" />
                 <video v-else-if="isVideoAttachment" :src="attachmentUrl" controls />
                 <audio v-else-if="isAudioAttachment" :src="attachmentUrl" controls />
-                <embed v-else-if="isPDF" :src="attachmentUrl" type="application/pdf" width="100%" height="600"></embed>
+                <embed v-else-if="isPDF" :src="attachmentUrl" type="application/pdf" width="100%" height="600" />
             </div>
-        </div>
         <div class="message-createdAt">{{ formattedDate }}</div>
     </div>
 </template>
@@ -32,19 +30,19 @@ export default {
             return false
         },
         isImageAttachment() {
-            if (!this.attachmentUrl) return  false
+            if (!this.attachmentUrl) return false
             return this.message.attachmentName && /\.(jpg|jpeg|png|gif)$/i.test(this.message.attachmentName)
         },
         isVideoAttachment() {
-            if (!this.attachmentUrl) return  false
+            if (!this.attachmentUrl) return false
             return this.message.attachmentName && /\.(mp4|avi|mov)$/i.test(this.message.attachmentName)
         },
         isAudioAttachment() {
-            if (!this.attachmentUrl) return  false
+            if (!this.attachmentUrl) return false
             return this.message.attachmentName && /\.(mp3|wav|opus)$/i.test(this.message.attachmentName)
         },
-        isPDF(){
-            if (!this.attachmentUrl) return  false
+        isPDF() {
+            if (!this.attachmentUrl) return false
             return this.message.attachmentName && /\.(pdf)$/i.test(this.message.attachmentName)
         },
         formattedDate() {
@@ -88,7 +86,7 @@ export default {
     box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 1px;
     position: relative;
     text-align: left;
-    max-width: 50%;
+    max-width: 45%;
 }
 
 .system-message {
@@ -112,7 +110,7 @@ export default {
     transition: opacity 0.3s ease 0s;
 }
 
-.message-item:hover .message-id{
+.message-item:hover .message-id {
     opacity: 1;
 }
 
@@ -150,5 +148,13 @@ export default {
     opacity: 0.6;
     flex: 0 0 auto;
     align-self: flex-end;
+}
+
+.attachment {
+    max-width: 100%;
+}
+
+.attachment img {
+    max-width: 100%;
 }
 </style>
