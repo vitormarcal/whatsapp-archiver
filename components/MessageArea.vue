@@ -2,12 +2,17 @@
     <div class="message-area d-none d-sm-flex flex-column col-12 col-sm-7 col-md-8 p-0 h-100" ref="chatWindow"
          @scroll="loadMoreMessages">
 
-        <div id="navbar" class="row d-flex flex-row align-items-center p-2 m-0 w-100" v-if="showNavBar">
+        <div id="navbar" class="row d-flex flex-row align-items-center p-2 m-0" v-if="showNavBar">
             <a href="#"><img src="/default-profile-image.png" alt="Profile Photo" class="img-fluid rounded-circle mr-2"
                              style="height:50px;" id="pic"></a>
             <div class="d-flex flex-column">
                 <div class="text-white font-weight-bold" id="name">{{ this.activeChat.name }}</div>
                 <div class="text-white small" id="details">last seen {{ formattedDate }}</div>
+            </div>
+
+            <div class="d-flex flex-row align-items-center ml-auto">
+                <a href="#" class="h2"><b-icon icon="search"></b-icon></a>
+                <a href="#" class="h2"><b-icon icon="grip-vertical"></b-icon></a>
             </div>
         </div>
 
@@ -112,8 +117,9 @@ export default {
 #navbar {
     position: fixed;
     top: 0;
-    width: 100%;
     z-index: 9999;
     background: rgb(15, 59, 62);
+    right: auto;
+    width: calc(67% - 1px);
 }
 </style>
