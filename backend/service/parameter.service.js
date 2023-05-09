@@ -24,7 +24,18 @@ class ParameterService {
             return it
         });
     };
-    findAll = async () => Parameter.findAndCountAll();
+    findAll = async () => {
+        const cacheKey = `findAll`;
+        const cacheResult = cache.get(cacheKey);
+        if (cacheResult) {
+            console.log('Retornando resultado do cache.');
+            return cacheResult;
+        }
+        return Parameter.findAndCountAll().then(it => {
+            cache.set(cacheKey, it)
+            return it
+        });
+    };
 
 
     save = async (payload) => {
