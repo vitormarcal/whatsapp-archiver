@@ -12,7 +12,20 @@
 
             <div class="d-flex flex-row align-items-center ml-auto">
                 <a href="#" class="h2"><b-icon icon="search"></b-icon></a>
-                <a href="#" class="h2"><b-icon icon="grip-vertical"></b-icon></a>
+
+                <b-dropdown variant="primary">
+                    <template #button-content>
+                        <b-icon icon="gear-fill" aria-hidden="true"></b-icon> Settings
+                    </template>
+                    <b-dropdown-item-button v-b-modal.modal-prevent-closing>Edit Chat Name</b-dropdown-item-button>
+                    <b-dropdown-item-button>Edit Profile Image</b-dropdown-item-button>
+                    <b-dropdown-item-button>Edit Author Name</b-dropdown-item-button>
+                    <b-dropdown-divider></b-dropdown-divider>
+                    <b-dropdown-item-button variant="danger">
+                        <b-icon icon="trash-fill" aria-hidden="true"></b-icon>
+                        Delete
+                    </b-dropdown-item-button>
+                </b-dropdown>
             </div>
         </div>
 
@@ -22,6 +35,8 @@
                 <message-item :message="message" :my-name="myName"/>
             </template>
         </div>
+
+        <edit-chat-modal :messages="messages"></edit-chat-modal>
     </div>
 </template>
 <script>
@@ -117,7 +132,7 @@ export default {
 #navbar {
     position: fixed;
     top: 0;
-    z-index: 9999;
+    z-index: 1000;
     background: rgb(15, 59, 62);
     right: auto;
     width: calc(67% - 1px);
