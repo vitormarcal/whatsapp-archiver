@@ -36,6 +36,17 @@ router.get("/:chatId", function (req, res) {
     });
 });
 
+router.patch("/:chatId/name", function (req, res) {
+    let chatId = req.params.chatId;
+    let newChatName = req.body.newChatName;
+    chatService.updateNameById(chatId, newChatName).then(() => {
+        res.sendStatus(200)
+    }).catch(error => {
+        console.error(`Erro ao buscar chat ${chatId}`, error);
+        res.sendStatus(500);
+    });
+});
+
 router.get("/:chatId/messages", function (req, res) {
     let chatId = req.params.chatId;
     const limit = parseInt(req.query.limit)

@@ -139,6 +139,13 @@ class ChatService {
         }
     }
 
+    async updateNameById(chatId, newChatName) {
+        Chat.update({name: newChatName}, {where: {id: chatId}})
+            .then(() => {
+                console.log('Registros atualizados com sucesso!');
+            })
+    }
+
     async findAttachmentBy(messageId) {
         return Message.findOne({
             where: {id: messageId},
