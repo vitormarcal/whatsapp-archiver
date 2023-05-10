@@ -36,7 +36,7 @@
             </template>
         </div>
 
-        <edit-chat-modal :messages="messages"></edit-chat-modal>
+        <edit-chat-modal :messages="messages" :active-chat="activeChat" @update:edit-chat="handleUpdateEditChat"></edit-chat-modal>
     </div>
 </template>
 <script>
@@ -60,6 +60,9 @@ export default {
 
     },
     methods: {
+        handleUpdateEditChat() {
+            this.$emit('update:edit-chat')
+        },
         async loadMoreMessages() {
             const chatWindow = this.$refs.chatWindow;
             let firstQuery = this.firstQuery;

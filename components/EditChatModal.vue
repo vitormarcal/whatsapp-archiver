@@ -67,14 +67,18 @@ export default {
         },
         async updateChatName() {
             if (this.newChatName && this.activeChat.name !== this.newChatName) {
-                const url = `http://localhost:3000/api/chats${this.activeChat.id}/name`
-                return this.$axios.$patch(url, {name: this.newChatName})
+                const url = `http://localhost:3000/api/chats/${this.activeChat.id}/name`
+                return this.$axios.$patch(url, {newChatName: this.newChatName})
             }
         },
-        async updateAuthor(message) {
-            if (message.author === this.authorSelect && this.newAuthorName !== message.author) {
-                const url = `http://localhost:3000/api/messages${message.id}/author`
-                return this.$axios.$patch(url, {author: this.newAuthorName})
+        async updateAuthor() {
+            if (this.authorSelect && this.newAuthorName && this.newAuthorName !== this.authorSelect) {
+                const url = `http://localhost:3000/api/messages/author`
+                return this.$axios.$patch(url, {
+                    oldName: this.authorSelect,
+                    newName: this.newAuthorName,
+                    chatId: this.activeChat.id
+                })
             }
         },
         handleSubmit() {
@@ -85,12 +89,12 @@ export default {
 
 
             Promise.all(
-                [this.updateChatName(),
-                    ...this.messages.map(it => {
-                        this.updateAuthor(it)
-                    })]
+                [
+                    this.updateChatName(),
+                    this.updateAuthor()
+                ]
             ).then(() => {
-                this.$emit('update:edit-chat', this.item)
+                this.$emit('update:edit-chat')
                 this.$nextTick(() => {
                     this.$bvModal.hide('modal-prevent-closing')
                 })
