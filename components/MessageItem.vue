@@ -1,9 +1,9 @@
 <template>
     <div class="message-item rounded d-flex flex-column" :class="classObject">
         <div class="message-id">{{ message.id }}</div>
-            <div class="author">{{ message.author }}</div>
-            <div class="message-content" v-html="safeContent"></div>
-            <attachment :message="message"></attachment>
+        <div class="author font-weight-bold" :style="{ color: color }">{{ message.author }}</div>
+        <div class="message-content" v-html="safeContent"></div>
+        <attachment :message="message"></attachment>
         <div class="message-createdAt">{{ formattedDate }}</div>
     </div>
 </template>
@@ -12,6 +12,22 @@
 export default {
     props: ['message', 'myName'],
     computed: {
+        color() {
+            const author = this.message?.author
+            if (author) {
+                let hash = 0;
+                for (let i = 0; i < author.length; i++) {
+                    hash = author.charCodeAt(i) + ((hash << 5) - hash);
+                }
+                let color = "#";
+                for (let i = 0; i < 3; i++) {
+                    let value = (hash >> (i * 8)) & 0xff;
+                    color += ("00" + value.toString(16)).substr(-2);
+                }
+                return color;
+            }
+
+        },
         safeContent() {
             return this.message.content.replace(
                 /https?:\/\/[^\s]+/g,
