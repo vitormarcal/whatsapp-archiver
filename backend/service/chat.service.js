@@ -33,7 +33,8 @@ class ChatService {
                 Message.findAll({ where: { chatId: chatId }, order: [['date', 'asc']], }).then(messages => {
                     return messages.map(it => {
                         const content  = it.author ? `${it.author}: ${it.content}` : it.content
-                        return `${it.date} - ${content}`;
+                        const date = formatDate(it.date)
+                        return `${date} - ${content}`;
                     }).join('\n')
                 })
             ]
@@ -247,6 +248,16 @@ class ChatService {
 
         });
     }
+}
+
+function formatDate(date) {
+    const d = String(date.getDate()).padStart(2, "0");
+    const MM = String(date.getMonth() + 1).padStart(2, "0");
+    const yyyy = String(date.getFullYear());
+    const hh = String(date.getHours()).padStart(2, "0");
+    const min = String(date.getMinutes()).padStart(2, "0");
+
+    return  `${d}/${MM}/${yyyy} ${hh}:${min}`;
 }
 
 
