@@ -3,8 +3,7 @@
          @scroll="loadMoreMessages">
 
         <div id="navbar" class="row d-flex flex-row align-items-center p-2 m-0" v-if="showNavBar">
-            <a href="#"><img src="/default-profile-image.png" alt="Profile Photo" class="img-fluid rounded-circle mr-2"
-                             style="height:50px;" id="pic"></a>
+            <a href="#"><profile-image :chat-id="activeChat.id"/></a>
             <div class="d-flex flex-column">
                 <div class="text-white font-weight-bold" id="name">{{ this.activeChat.name }}</div>
                 <div class="text-white small" id="details">last seen {{ formattedDate }}</div>
