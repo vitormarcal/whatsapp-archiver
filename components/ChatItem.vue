@@ -2,8 +2,7 @@
     <div class="chat-item d-flex flex-row p-2 w-100 border-bottom"
          @click="toggleActive()"
          :class="{ 'active': item.id === activeChat.id }">
-        <img src="/default-profile-image.png" alt="Profile Photo" class="img-fluid rounded-circle mr-2"
-             style="height:50px;">
+        <profile-image :chat-id="item.id"/>
         <div class="w-50">
             <div class="name">{{ item.name }}</div>
             <div class="small">
