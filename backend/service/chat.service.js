@@ -1,4 +1,5 @@
 const {Chat, Message, sequelize} = require('../models');
+const { v4: uuidv4 } = require('uuid');
 const fs = require("fs");
 
 class ChatService {
@@ -9,11 +10,12 @@ class ChatService {
 
         this.findOrCreateChat = async (chatName, attachmentDir, transaction) => {
             console.log(`Chat.findOrCreate chatName: ${chatName}`)
+            const uuid = uuidv4()
             let chat = await Chat.findOne({where: {name: chatName}});
             if (!chat) {
                 chat = await Chat.create({
                     name: chatName,
-                    attachmentDir: `${attachmentDir}/${chatName}`
+                    attachmentDir: `${attachmentDir}/${uuid}`
                 }, {transaction});
             }
             return chat;
@@ -77,7 +79,7 @@ class ChatService {
                     attributes: [
                         'id',
                         'content',
-                        'createdAt',
+                        'date',
                     ],
                     order: [['id', 'DESC']],
                     limit: 1,
@@ -109,6 +111,9 @@ class ChatService {
 
     async findAll() {
         const {count, rows} = (await Chat.findAndCountAll({
+            order: sequelize.literal(
+                `(SELECT MAX(message.date) FROM messages AS message WHERE message.chatId = chat.id GROUP BY message.chatId) DESC`
+            ),
             attributes: {
                 include: [
                     [
