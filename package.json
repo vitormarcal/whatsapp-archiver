@@ -26,6 +26,7 @@
     "nuxt": "^2.15.8",
     "sequelize": "^6.31.0",
     "sqlite3": "^5.1.6",
+    "uuid": "^9.0.0",
     "vue": "^2.7.10",
     "vue-server-renderer": "^2.7.10",
     "vue-template-compiler": "^2.7.10",

@@ -13,7 +13,7 @@
             </div>
         </div>
         <div class="flex-grow-1 text-right">
-            <div class="small">{{ item.lastMessage.createdAt }}</div>
+            <div class="small">{{ item.lastMessage.date }}</div>
             <div class="badge badge-success badge-pill small">{{ item.messagesCount }}</div>
         </div>
 
