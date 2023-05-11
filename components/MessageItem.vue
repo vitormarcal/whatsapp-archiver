@@ -3,12 +3,7 @@
         <div class="message-id">{{ message.id }}</div>
             <div class="author">{{ message.author }}</div>
             <div class="message-content" v-html="safeContent"></div>
-            <div v-if="attachmentUrl" class="attachment">
-                <b-img  fluid v-if="isImageAttachment" :src="attachmentUrl" />
-                <video v-else-if="isVideoAttachment" :src="attachmentUrl" controls />
-                <audio v-else-if="isAudioAttachment" :src="attachmentUrl" controls />
-                <embed v-else-if="isPDF" :src="attachmentUrl" type="application/pdf" width="100%" height="600" />
-            </div>
+            <attachment :message="message"></attachment>
         <div class="message-createdAt">{{ formattedDate }}</div>
     </div>
 </template>
