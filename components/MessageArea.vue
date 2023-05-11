@@ -19,6 +19,7 @@
                     </template>
                     <b-dropdown-item-button v-b-modal.modal-edit-chat>Edit Chat</b-dropdown-item-button>
                     <b-dropdown-item-button v-b-modal.modal-media-gallery>View Media</b-dropdown-item-button>
+                    <b-dropdown-item-button>Exportar</b-dropdown-item-button>
                     <b-dropdown-divider></b-dropdown-divider>
                     <b-dropdown-item-button variant="danger">
                         <b-icon icon="trash-fill" aria-hidden="true"></b-icon>
