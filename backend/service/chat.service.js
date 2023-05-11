@@ -1,3 +1,4 @@
+const Sequelize = require('sequelize');
 const {Chat, Message, sequelize} = require('../models');
 const { v4: uuidv4 } = require('uuid');
 const fs = require("fs");
@@ -149,6 +150,18 @@ class ChatService {
             .then(() => {
                 console.log('Registros atualizados com sucesso!');
             })
+    }
+
+    async findMessagesWithAttachmenty(chatId) {
+        return Message.findAll({
+            attributes: ['attachmentName', 'id' ],
+            where: {
+                chatId: [chatId],
+                attachmentName: {
+                    [Sequelize.Op.ne]: null
+                }
+            }
+        })
     }
 
     async findAttachmentBy(messageId) {

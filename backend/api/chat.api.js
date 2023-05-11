@@ -63,5 +63,17 @@ router.get("/:chatId/messages", function (req, res) {
     });
 });
 
+router.get("/:chatId/messages/attachments/", function (req, res) {
+    let chatId = req.params.chatId;
+
+    chatService.findMessagesWithAttachmenty(chatId).then(names => {
+        if (names) res.send(names)
+        else res.sendStatus(404)
+    }).catch(error => {
+        console.error(`Erro ao buscar mensagens ${chatId}`, error);
+        res.sendStatus(500);
+    });
+});
+
 
 module.exports = router;

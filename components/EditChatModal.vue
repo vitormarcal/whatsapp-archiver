@@ -1,8 +1,7 @@
 <template>
 
     <b-modal
-
-            id="modal-prevent-closing"
+            id="modal-edit-chat"
             ref="modal"
             title="Edite o chat"
             @show="resetModal"

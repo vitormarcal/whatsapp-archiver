@@ -17,8 +17,8 @@
                     <template #button-content>
                         <b-icon icon="gear-fill" aria-hidden="true"></b-icon> Settings
                     </template>
-                    <b-dropdown-item-button v-b-modal.modal-prevent-closing>Edit Chat Name</b-dropdown-item-button>
-                    <b-dropdown-item-button>View Media</b-dropdown-item-button>
+                    <b-dropdown-item-button v-b-modal.modal-edit-chat>Edit Chat</b-dropdown-item-button>
+                    <b-dropdown-item-button v-b-modal.modal-media-gallery>View Media</b-dropdown-item-button>
                     <b-dropdown-divider></b-dropdown-divider>
                     <b-dropdown-item-button variant="danger">
                         <b-icon icon="trash-fill" aria-hidden="true"></b-icon>
@@ -34,6 +34,8 @@
                 <message-item :message="message" :my-name="myName"/>
             </template>
         </div>
+
+        <media-gallery-modal :messages="messages" :active-chat="activeChat"/>
 
         <edit-chat-modal :messages="messages" :active-chat="activeChat" @update:edit-chat="handleUpdateEditChat"></edit-chat-modal>
     </div>
