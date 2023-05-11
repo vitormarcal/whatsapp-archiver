@@ -36,6 +36,15 @@ router.get("/:chatId", function (req, res) {
     });
 });
 
+router.get("/:chatId/export", function (req, res) {
+    let chatId = req.params.chatId;
+    chatService.export(chatId).then(saved => {
+        res.send(saved);
+    }).catch(e => {
+        console.log(e)
+        res.send("error");
+    })
+});
 router.patch("/:chatId/name", function (req, res) {
     let chatId = req.params.chatId;
     let newChatName = req.body.newChatName;

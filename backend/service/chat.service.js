@@ -1,6 +1,8 @@
 const Sequelize = require('sequelize');
 const {Chat, Message, sequelize} = require('../models');
-const { v4: uuidv4 } = require('uuid');
+const path = require("path");
+const AdmZip = require("adm-zip");
+const {v4: uuidv4} = require('uuid');
 const fs = require("fs");
 
 class ChatService {
@@ -21,6 +23,63 @@ class ChatService {
             }
             return chat;
         };
+    }
+
+    async export(chatId) {
+
+        return Promise.all(
+            [
+                this.findChat(chatId),
+                Message.findAll({ where: { chatId: chatId }, order: [['date', 'asc']], }).then(messages => {
+                    return messages.map(it => {
+                        const content  = it.author ? `${it.author}: ${it.content}` : it.content
+                        return `${it.date} - ${content}`;
+                    }).join('\n')
+                })
+            ]
+        ).then(([ chat, joinedMessages]) => {
+            fs.writeFileSync(chat.attachmentDir+ '/messages.txt', joinedMessages)
+            return this.createZipArchive(chat.attachmentDir)
+        })
+    }
+
+    async createZipArchive(directoryPath) {
+        return new Promise((resolve, reject) => {
+            // Criar uma instância do AdmZip
+            const zip = new AdmZip();
+
+            // Lê todos os arquivos no diretório e adiciona-os ao zip
+            fs.readdir(directoryPath, (err, files) => {
+                if (err) {
+                    return reject(err);
+                }
+
+                const filePaths = files.map((file) => path.join(directoryPath, file));
+
+                Promise.all(
+                    filePaths.map((filePath) =>
+                        new Promise((resolve, reject) => {
+                            fs.stat(filePath, (err, stats) => {
+                                if (err) {
+                                    return reject(err);
+                                }
+
+                                if (stats.isFile()) {
+                                    zip.addLocalFile(filePath);
+                                }
+
+                                resolve();
+                            });
+                        })
+                    )
+                )
+                    .then(() => {
+                        // Retorne o buffer do arquivo zip
+                        resolve(zip.toBuffer());
+                    })
+                    .catch((err) => reject(err));
+            });
+        });
     }
 
     async saveAll(messages, attachmentPath, chatName) {
@@ -154,7 +213,7 @@ class ChatService {
 
     async findMessagesWithAttachmenty(chatId) {
         return Message.findAll({
-            attributes: ['attachmentName', 'id' ],
+            attributes: ['attachmentName', 'id'],
             where: {
                 chatId: [chatId],
                 attachmentName: {
