@@ -4,7 +4,7 @@
             <div class="author">{{ message.author }}</div>
             <div class="message-content" v-html="safeContent"></div>
             <div v-if="attachmentUrl" class="attachment">
-                <img v-if="isImageAttachment" :src="attachmentUrl" />
+                <b-img  fluid v-if="isImageAttachment" :src="attachmentUrl" />
                 <video v-else-if="isVideoAttachment" :src="attachmentUrl" controls />
                 <audio v-else-if="isAudioAttachment" :src="attachmentUrl" controls />
                 <embed v-else-if="isPDF" :src="attachmentUrl" type="application/pdf" width="100%" height="600" />
@@ -31,7 +31,7 @@ export default {
         },
         isImageAttachment() {
             if (!this.attachmentUrl) return false
-            return this.message.attachmentName && /\.(jpg|jpeg|png|gif)$/i.test(this.message.attachmentName)
+            return this.message.attachmentName && /\.(jpg|jpeg|png|gif|webp)$/i.test(this.message.attachmentName)
         },
         isVideoAttachment() {
             if (!this.attachmentUrl) return false
