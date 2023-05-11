@@ -1,4 +1,6 @@
 const fs = require('fs');
+const multer = require("multer");
+const upload = multer();
 const express = require('express');
 const path = require("path");
 const router = express.Router();
@@ -71,6 +73,40 @@ router.get("/:chatId/messages", function (req, res) {
         res.sendStatus(500);
     });
 });
+
+router.put('/:chatId/profile-image.jpg', upload.single("image"), (req, res) => {
+    const image = req.file;
+    chatService.findChat(req.params.chatId).then(chat => {
+        const pathImage = path.join(chat.attachmentDir, 'profile_image.jpg');
+        fs.writeFile(pathImage, image.buffer, (err) => {
+            if (err) {
+                console.error(err);
+                res.status(500).json({error: 'Erro ao salvar imagem.'});
+            } else {
+                res.status(200).json({message: 'Imagem salva com sucesso.'});
+            }
+        });
+    })
+});
+
+router.get("/:chatId/profile-image.jpg", function (req, res) {
+    let chatId = req.params.chatId;
+    chatService.findChat(chatId).then(chat => {
+
+        if (chat && fs.existsSync(chat.attachmentDir)) {
+            const image = fs.readFileSync(path.join(chat.attachmentDir, 'profile_image.jpg'));
+            res.writeHead(200, {'Content-Type': 'image/jpeg'});
+            res.end(image);
+        } else {
+            res.sendStatus(404);
+        }
+
+    }).catch(e => {
+        console.log(e)
+        res.send("error");
+    })
+});
+
 
 router.get("/:chatId/messages/attachments/", function (req, res) {
     let chatId = req.params.chatId;

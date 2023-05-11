@@ -22,6 +22,22 @@
                 ></b-form-input>
             </b-form-group>
 
+            <b-form-group
+                    label="New Profile Image"
+                    label-for="profile-img-input"
+                    invalid-feedback="New Profile Image"
+
+            >
+                <b-form-file
+                        id="profile-img-input"
+                        v-model="newProfileImage"
+                        placeholder="Escolha uma imagem ou arraste e solte aqui"
+                        drop-placeholder="Solte aqui"
+                        accept="image/*"
+                        required
+                ></b-form-file>
+            </b-form-group>
+
             Replace the author:
             <b-form-select v-model="authorSelect" :options="allUniqueNames"></b-form-select>
             <b-form-group
@@ -49,12 +65,14 @@ export default {
         return {
             newAuthorName: null,
             authorSelect: null,
+            newProfileImage: null,
             newChatName: null
         }
     },
     methods: {
         resetModal() {
             this.newAuthorName = null
+            this.newProfileImage = null
             this.authorSelect = null
             this.newChatName = null
         },
@@ -62,12 +80,25 @@ export default {
             // Prevent modal from closing
             bvModalEvent.preventDefault()
             // Trigger submit handler
-            this.handleSubmit()
+            this.handleSubmit().then(() => {
+                this.$nextTick(() => {
+                    this.$bvModal.hide('modal-prevent-closing')
+                })
+            })
         },
         async updateChatName() {
             if (this.newChatName && this.activeChat.name !== this.newChatName) {
                 const url = `http://localhost:3000/api/chats/${this.activeChat.id}/name`
                 return this.$axios.$patch(url, {newChatName: this.newChatName})
+            }
+        },
+        async updateProfileImage() {
+
+            if (this.newProfileImage) {
+                const formData = new FormData();
+                formData.append('image', this.newProfileImage);
+
+                return this.$axios.put(`http://localhost:3000/api/chats/${this.activeChat.id}/profile-image.jpg`, formData)
             }
         },
         async updateAuthor() {
@@ -80,23 +111,18 @@ export default {
                 })
             }
         },
-        handleSubmit() {
-            console.log("handle submit")
-            console.log(this.newChatName)
-            console.log(this.authorSelect)
-            console.log(this.newAuthorName)
-
-
+        async handleSubmit() {
             Promise.all(
                 [
                     this.updateChatName(),
+                    this.updateProfileImage(),
                     this.updateAuthor()
                 ]
             ).then(() => {
-                this.$emit('update:edit-chat')
                 this.$nextTick(() => {
                     this.$bvModal.hide('modal-prevent-closing')
                 })
+                this.$emit('update:edit-chat')
             })
 
 
