@@ -18,8 +18,7 @@
                         <b-icon icon="gear-fill" aria-hidden="true"></b-icon> Settings
                     </template>
                     <b-dropdown-item-button v-b-modal.modal-prevent-closing>Edit Chat Name</b-dropdown-item-button>
-                    <b-dropdown-item-button>Edit Profile Image</b-dropdown-item-button>
-                    <b-dropdown-item-button>Edit Author Name</b-dropdown-item-button>
+                    <b-dropdown-item-button>View Media</b-dropdown-item-button>
                     <b-dropdown-divider></b-dropdown-divider>
                     <b-dropdown-item-button variant="danger">
                         <b-icon icon="trash-fill" aria-hidden="true"></b-icon>
