@@ -19,27 +19,8 @@ $ npm run generate
 
 For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
 
+Create .env file with:
 
-Create archive midia dir:
-```shell
-curl --location 'localhost:3000/api/parameters' \
---header 'Content-Type: application/json' \
---data '{
-"name": "ARCHIVE_DIR",
-"value": "/path/to/archive/media"
-}'
-```
-
-
-
-Create archive midia dir:
-
-```shell
-curl --location 'localhost:3000/api/parameters' \
---header 'Content-Type: application/json' \
---data '{
-"name": "SRC_DIR",
-"value": "path/to/source/media"
-}'
-```
-
+WHATSAPP_ARCHIVER_DATABASE_PATH=/path/to/whatsapp_arquiver.sqlite
+ARCHIVE_DIR=/path/to/whatsapp/archive
+SRC_DIR=/path/to/whatsapp/source
