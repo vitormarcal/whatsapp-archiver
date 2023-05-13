@@ -27,10 +27,10 @@ export default {
     methods: {
         async handleUpdateEditChat() {
             const chat = await this.$axios.$get('http://localhost:3007/api/chats/' + this.activeChat.id)
-            const index = this.chats.data.findIndex(it => it.id === chat.id);
+            const index = this.chats.findIndex(it => it.id === chat.id);
             this.activeChat = chat
             if (index !== -1) {
-                this.chats.data.splice(index, 1, chat);
+                this.chats.splice(index, 1, chat);
             }
 
         },
@@ -39,8 +39,8 @@ export default {
         }
     },
     async asyncData({$axios}) {
-        const chats = await $axios.$get('http://localhost:3007/api/chats/')
-        return {chats}
+        const {count, data} = await $axios.$get('http://localhost:3007/api/chats/')
+        return {count, chats: data}
     }
 }
 </script>

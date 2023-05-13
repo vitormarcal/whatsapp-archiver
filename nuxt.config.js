@@ -1,9 +1,13 @@
+const port = 3007
 export default {
   // Target: https://go.nuxtjs.dev/config-target
   target: 'server',
+  env: {
+    apiUrl: process.env.API_URL || `http://localhost:${port}`
+  },
 
   server: {
-    port: 3007,
+    port: port,
     host: '0'
   },
 
