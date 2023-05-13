@@ -41,7 +41,7 @@ export default {
     },
     methods: {
         async getUrlMedias() {
-                const url = `http://localhost:3000/api/chats/${this.activeChat.id}/messages/attachments`
+                const url = `http://localhost:3007/api/chats/${this.activeChat.id}/messages/attachments`
                 const response = await this.$axios.$get(url)
 
             this.mediaGroups = response.reduce((acc, cur, i) => {

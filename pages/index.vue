@@ -26,7 +26,7 @@ export default {
     },
     methods: {
         async handleUpdateEditChat() {
-            const chat = await this.$axios.$get('http://localhost:3000/api/chats/' + this.activeChat.id)
+            const chat = await this.$axios.$get('http://localhost:3007/api/chats/' + this.activeChat.id)
             const index = this.chats.data.findIndex(it => it.id === chat.id);
             this.activeChat = chat
             if (index !== -1) {
@@ -39,7 +39,7 @@ export default {
         }
     },
     async asyncData({$axios}) {
-        const chats = await $axios.$get('http://localhost:3000/api/chats/')
+        const chats = await $axios.$get('http://localhost:3007/api/chats/')
         return {chats}
     }
 }

@@ -36,7 +36,7 @@ export default {
         },
         attachmentUrl() {
             if (this.message?.attachmentName) {
-                return `http://localhost:3000/api/messages/${this.message.id}/attachment`
+                return `http://localhost:3007/api/messages/${this.message.id}/attachment`
             }
             return false
         },
