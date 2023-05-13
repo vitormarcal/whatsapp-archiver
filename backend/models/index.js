@@ -1,7 +1,8 @@
-const { sequelize } = require('./sequelize')
-const { Chat } = require('./chat');
-const { Message } = require('./message');
-const { Parameter } = require('./parameter');
+const {sequelize} = require('./sequelize')
+const {Chat} = require('./chat');
+const {Message} = require('./message');
+const {Parameter} = require('./parameter');
+const path = require("path");
 
 Chat.hasMany(Message, {
     foreignKey: 'chatId'
@@ -12,23 +13,33 @@ Message.belongsTo(Chat, {
 
 
 sequelize.sync()
-    .then(() => console.log('Modelos sincronizados com sucesso!'))
+    .then(() => {
+        console.log('Modelos sincronizados com sucesso!');
+        return insertParameter()
+    })
     .catch(err => console.log('Erro ao sincronizar modelos:', err));
 
 
-const path = require("path");
-Parameter.findOrCreate({
-    where: {name: 'SRC_DIR'},
-    defaults: {
-        value: process.env.SRC_DIR || path.join(__dirname, '../whatsapp/source')
-    }
-}).then(([parameter]) => console.log(`SRC_DIR=${parameter.value}`))
-Parameter.findOrCreate({
-    where: {name: 'ARCHIVE_DIR'},
-    defaults: {
-        value: process.env.ARCHIVE_DIR || path.join(__dirname, '../whatsapp/archive')
-    }
-}).then(([parameter]) => console.log(`ARCHIVE_DIR=${parameter.value}`))
+function insertParameter() {
+    return Parameter.findOne({where: {name: 'SRC_DIR'}}).then(parameter => {
+        if (!parameter) return Parameter.create({
+            name: 'SRC_DIR',
+            value: process.env.SRC_DIR || path.join(__dirname, '../whatsapp/source')
+        })
+        return parameter
+    }).then(parameter => {
+        console.log(`${parameter.name}=${parameter.value} saved`);
+        Parameter.findOne({where: {name: 'ARCHIVE_DIR'}}).then(parameter => {
+            if (!parameter) return Parameter.create({
+                name: 'ARCHIVE_DIR',
+                value: process.env.ARCHIVE_DIR || path.join(__dirname, '../whatsapp/archive')
+            })
+            return parameter
+        }).then(parameter => {
+            console.log(`${parameter.name}=${parameter.value} saved`);
+        })
+    })
+}
 
 module.exports = {
     Chat,
