@@ -3,7 +3,8 @@ export default {
   target: 'server',
 
   server: {
-    port: 3007
+    port: 3007,
+    host: '0'
   },
 
   // Global page headers: https://go.nuxtjs.dev/config-head
