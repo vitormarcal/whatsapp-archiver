@@ -10,7 +10,7 @@ export default {
     computed: {
         profileUrl() {
             if (this.chatId && this.chatId !== -1) {
-                return `http://localhost:3007/api/chats/${this.chatId}/profile-image.jpg`
+                return `api/chats/${this.chatId}/profile-image.jpg`
             } else {
                 return '/default-profile-image.png'
             }

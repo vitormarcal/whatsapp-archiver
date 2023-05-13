@@ -85,7 +85,7 @@ export default {
             if (this.existsChat) {
                 const limit = 50
                 const offset = this.config[this.chatId].offset
-                const url = `http://localhost:3007/api/chats/${this.activeChat.id}/messages?offset=${offset}&limit=${limit}`
+                const url = `api/chats/${this.activeChat.id}/messages?offset=${offset}&limit=${limit}`
                 const response = await this.$axios.$get(url)
                 this.messages = [...response.data, ...this.messages]
                 this.config[this.chatId].offset += limit

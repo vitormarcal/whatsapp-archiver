@@ -88,7 +88,7 @@ export default {
         },
         async updateChatName() {
             if (this.newChatName && this.activeChat.name !== this.newChatName) {
-                const url = `http://localhost:3007/api/chats/${this.activeChat.id}/name`
+                const url = `api/chats/${this.activeChat.id}/name`
                 return this.$axios.$patch(url, {newChatName: this.newChatName})
             }
         },
@@ -98,12 +98,12 @@ export default {
                 const formData = new FormData();
                 formData.append('image', this.newProfileImage);
 
-                return this.$axios.put(`http://localhost:3007/api/chats/${this.activeChat.id}/profile-image.jpg`, formData)
+                return this.$axios.put(`api/chats/${this.activeChat.id}/profile-image.jpg`, formData)
             }
         },
         async updateAuthor() {
             if (this.authorSelect && this.newAuthorName && this.newAuthorName !== this.authorSelect) {
-                const url = `http://localhost:3007/api/messages/author`
+                const url = `api/messages/author`
                 return this.$axios.$patch(url, {
                     oldName: this.authorSelect,
                     newName: this.newAuthorName,

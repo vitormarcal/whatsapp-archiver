@@ -21,7 +21,9 @@ export default {
         return {
             myName: 'Vítor Marçal',
             messages: [],
-            activeChat: {id: -1}
+            activeChat: {id: -1},
+            chats: [],
+            count: 0
         }
     },
     methods: {
@@ -36,11 +38,17 @@ export default {
         },
         refreshMessageArea(activeChat) {
             this.activeChat = activeChat
+        },
+        async getChatInfo() {
+            const host = window.location
+            const {count, data} = await this.$axios.$get(`${host}api/chats/`)
+            this.chats = data
+            this.count = count
+
         }
     },
-    async asyncData({$axios}) {
-        const {count, data} = await $axios.$get('http://localhost:3007/api/chats/')
-        return {count, chats: data}
+    created() {
+        this.getChatInfo()
     }
 }
 </script>
