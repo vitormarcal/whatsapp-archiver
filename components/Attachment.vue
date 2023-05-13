@@ -14,7 +14,7 @@ export default {
     props: ['message'],
     computed: {
         attachmentUrl() {
-                return `http://localhost:3007/api/messages/${this.message.id}/attachment`
+                return `api/messages/${this.message.id}/attachment`
         },
         isImageAttachment() {
             if (!this.attachmentUrl) return false
