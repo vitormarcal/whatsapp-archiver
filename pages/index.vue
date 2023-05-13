@@ -28,7 +28,7 @@ export default {
     },
     methods: {
         async handleUpdateEditChat() {
-            const chat = await this.$axios.$get('http://localhost:3007/api/chats/' + this.activeChat.id)
+            const chat = await this.$axios.$get('api/chats/' + this.activeChat.id)
             const index = this.chats.findIndex(it => it.id === chat.id);
             this.activeChat = chat
             if (index !== -1) {
