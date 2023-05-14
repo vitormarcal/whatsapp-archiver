@@ -26,4 +26,15 @@ router.patch("/author", function (req, res) {
     });
 });
 
+router.get("/author/chat/:chatId", function (req, res) {
+    let  chatId  = req.params.chatId;
+
+    messageService.findAuthorsByChatId(chatId).then((authors) => {
+        res.send(authors)
+    }).catch(error => {
+        console.error(`Erro ao buscar autores do chat ${chatId}`, error);
+        res.sendStatus(500);
+    });
+});
+
 module.exports = router;
