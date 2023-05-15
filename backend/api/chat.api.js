@@ -60,8 +60,8 @@ router.patch("/:chatId/name", function (req, res) {
 
 router.get("/:chatId/messages", function (req, res) {
     let chatId = req.params.chatId;
-    const limit = parseInt(req.query.limit)
-    const offset = parseInt(req.query.offset)
+    const limit = parseInt(req.query.limit || 1000)
+    const offset = parseInt(req.query.offset || 0)
 
     if (isNaN(limit) || isNaN(offset)) res.status(400).send("O parâmetro skip e offset precisa ser um número");
 

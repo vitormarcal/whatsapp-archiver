@@ -4,6 +4,30 @@ const {ChatService, MessageService} = require('../service');
 const chatService = new ChatService();
 const messageService = new MessageService();
 
+
+router.put("/:messageId", function (req, res) {
+    let messageToUpdate = req.body;
+    let messageId = req.params.messageId;
+    messageService.save(messageId, messageToUpdate).then(updated => {
+        if (updated) res.send(updated)
+        else res.sendStatus(404)
+    }).catch(error => {
+        console.error(`Erro ao atualziar : ${messageToUpdate}`, error);
+        res.sendStatus(500);
+    });
+});
+
+router.get("/:messageId", function (req, res) {
+    let messageId = req.params.messageId;
+    messageService.findById(messageId).then(message => {
+        if (message) res.send(message)
+        else res.sendStatus(404)
+    }).catch(error => {
+        console.error(`Erro ao buscar : ${messageId}`, error);
+        res.sendStatus(500);
+    });
+});
+
 router.get("/:messageId/attachment", function (req, res) {
     let messageId = req.params.messageId;
     chatService.findAttachmentBy(messageId).then(file => {
