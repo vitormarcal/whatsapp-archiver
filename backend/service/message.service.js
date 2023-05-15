@@ -1,5 +1,6 @@
 const { Message, sequelize } = require('../models');
 const Sequelize = require("sequelize");
+const {where} = require("sequelize");
 
 
 class MessageService {
@@ -20,6 +21,18 @@ class MessageService {
             },
             attributes: [[sequelize.fn('DISTINCT', sequelize.col('author')), 'author']]
         })
+    }
+
+    async save(id, messageToUpdate) {
+        return Message.update(messageToUpdate, {
+            where: {
+                id: id
+            }
+        })
+    }
+
+    async findById(id) {
+        return Message.findOne({where: {id}})
     }
 
 }
