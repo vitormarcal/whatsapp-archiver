@@ -3,8 +3,7 @@
         <b-img  fluid v-if="isImageAttachment" :src="attachmentUrl" />
         <video v-else-if="isVideoAttachment" :src="attachmentUrl" controls />
         <audio v-else-if="isAudioAttachment" :src="attachmentUrl" controls />
-        <embed v-else-if="isPDF" :src="attachmentUrl" type="application/pdf" width="100%" height="600" />
-        <a v-else-if="message.attachmentName" :download='message.attachmentName' :href="attachmentUrl">{{message.attachmentName}}</a>
+        <a v-else-if="isPDF || message.attachmentName" :download='message.attachmentName' :href="attachmentUrl">{{message.attachmentName}}</a>
     </div>
 </template>
 
