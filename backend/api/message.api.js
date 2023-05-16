@@ -1,4 +1,5 @@
 const express = require('express');
+const mimeTypes = require('mime-types');
 const router = express.Router();
 const {ChatService, MessageService} = require('../service');
 const chatService = new ChatService();
@@ -30,8 +31,17 @@ router.get("/:messageId", function (req, res) {
 
 router.get("/:messageId/attachment", function (req, res) {
     let messageId = req.params.messageId;
-    chatService.findAttachmentBy(messageId).then(file => {
-        if (file) res.send(file)
+    console.log(`find attachment from messageId: ${messageId}`)
+    chatService.findAttachmentBy(messageId).then(({filePath, dataBuffer}) => {
+        if (dataBuffer) {
+            const mimeType = mimeTypes.lookup(filePath);
+            if (mimeType) {
+                res.set("Content-Type", mimeType);
+                res.send(dataBuffer);
+            } else {
+                res.sendStatus(415);
+            }
+        }
         else res.sendStatus(404)
     }).catch(error => {
         console.error(`Erro ao buscar anexo messageId: ${messageId}`, error);
