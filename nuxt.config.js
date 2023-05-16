@@ -48,7 +48,34 @@ export default {
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    '@nuxtjs/auth'
   ],
+
+  auth: {
+    localStorage: true,
+    strategies: {
+      local: {
+        endpoints: {
+          login: {
+            url: '/api/users/login',
+            method: 'post',
+            propertyName: 'token'
+          },
+          logout: false,
+          user: {
+            url: '/api/users/me',
+            method: 'get',
+            propertyName: false
+          }
+        }
+      }
+    },
+    redirect: {
+      logout: '/',
+      callback: '/login',
+      home: '/'
+    },
+  },
 
   bootstrapVue: {
     // Install the `IconsPlugin` plugin (in addition to `BootstrapVue` plugin)

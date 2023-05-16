@@ -29,12 +29,12 @@ export default {
     },
     methods: {
         async userLogin() {
-           /* try {
+            try {
                 let response = await this.$auth.loginWith('local', { data: this.login })
                 console.log(response)
             } catch (err) {
                 console.log(err)
-            }*/
+            }
         }
     }
 }
