@@ -1,5 +1,5 @@
 <template>
-    <img :src="profileUrl" alt="Profile Photo" class="img-fluid rounded-circle mr-2"
+    <img :src="profileUrl"  alt="Profile Photo" class="img-fluid rounded-circle mr-2"
          style="height:50px;" id="pic">
 </template>
 
@@ -9,11 +9,12 @@ export default {
     props: ['chatId'],
     computed: {
         profileUrl() {
-            if (this.chatId && this.chatId !== -1) {
-                return `api/chats/${this.chatId}/profile-image.jpg`
-            } else {
-                return '/default-profile-image.png'
+            if (this.chatExists) {
+                return `api/attachments/chat/${this.chatId}/profile-image`
             }
+        },
+        chatExists() {
+            return this.chatId && this.chatId !== -1
         }
     }
 }

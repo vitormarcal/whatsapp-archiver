@@ -33,6 +33,7 @@ export default {
             const index = this.chats.findIndex(it => it.id === chat.id);
             this.activeChat = chat
             if (index !== -1) {
+                debugger
                 this.chats.splice(index, 1, chat);
             }
 
