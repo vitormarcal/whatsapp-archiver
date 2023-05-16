@@ -2,6 +2,7 @@ const {sequelize} = require('./sequelize')
 const {Chat} = require('./chat');
 const {Message} = require('./message');
 const {Parameter} = require('./parameter');
+const {User} = require('./user');
 const path = require("path");
 
 Chat.hasMany(Message, {
@@ -45,5 +46,6 @@ module.exports = {
     Chat,
     Message,
     Parameter,
-    sequelize
+    sequelize,
+    User
 };
