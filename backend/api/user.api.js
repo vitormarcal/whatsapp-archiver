@@ -1,18 +1,20 @@
 const express = require('express');
 const {User} = require("../models");
+const auth = require("../middleware/auth")
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const router = express.Router();
 
-router.post("/sign-up", async (req, res) => {
+router.post("/signup", async (req, res) => {
     try {
         // Extract email and password from the req.body object
-        const { email, password } = req.body;
+        const {email, password} = req.body;
 
         // Check if the email is already in use
-        let userExists = await User.findOne({ email });
+        let userExists = await User.findOne({where: {email}});
 
         if (userExists) {
-            res.status(401).json({ message: "Email is already in use." });
+            res.status(401).json({message: "Email is already in use."});
             return;
         }
 
@@ -25,13 +27,24 @@ router.post("/sign-up", async (req, res) => {
 
             // Create a new user
             let user = new User({
-                email,
-                password: hash,
+                email, password: hash,
             });
 
             // Save user to database
             user.save().then(() => {
-                res.json({ message: "User created successfully", user });
+                const payload = {
+                    user: {
+                        id: user.id
+                    }
+                };
+                jwt.sign(payload, "randomString", {
+                    expiresIn: 10000
+                }, (err, token) => {
+                    if (err) throw err;
+                    res.status(200).json({
+                        token
+                    });
+                });
             });
         });
     } catch (err) {
@@ -39,29 +52,58 @@ router.post("/sign-up", async (req, res) => {
     }
 });
 
-router.post("/sign-in", async (req, res) => {
+router.post("/login", async (req, res) => {
     try {
         // Extract email and password from the req.body object
-        const { email, password } = req.body;
+        const {email, password} = req.body;
 
         // Check if user exists in database
-        let user = await User.findOne({ email });
+        let user = await User.findOne({where: {email}});
 
         if (!user) {
-            return res.status(401).json({ message: "Invalid Credentials" });
+            return res.status(401).json({message: "Invalid Credentials"});
         }
 
         // Compare passwords
         bcrypt.compare(password, user.password, (err, result) => {
             if (result) {
-                return res.status(200).json({ message: "User Logged in Successfully" });
+
+
+                const payload = {
+                    user: {
+                        id: user.id
+                    }
+                };
+                jwt.sign(payload, "randomString", {
+                    expiresIn: 10000
+                }, (err, token) => {
+                    if (err) throw err;
+                    res.status(200).json({
+                        token
+                    });
+                });
+
+            } else {
+                console.log(err);
+                return res.status(401).json({message: "Invalid Credentials"});
             }
 
-            console.log(err);
-            return res.status(401).json({ message: "Invalid Credentials" });
         });
     } catch (error) {
         res.status(401).send(error.message);
+    }
+});
+
+router.get("/me", auth, async (req, res) => {
+    try {
+        // request.user is getting fetched from Middleware after token authentication
+        const user = await User.findByPk(req.user.id, {
+            attributes: { exclude: ['password'] }
+        });
+
+        res.json(user);
+    } catch (e) {
+        res.send({ message: "Error in Fetching user" });
     }
 });
 
