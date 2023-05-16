@@ -1,9 +1,10 @@
 <template>
     <div v-if="attachmentUrl" class="attachment">
-        <b-img  fluid v-if="isImageAttachment" :src="attachmentUrl" />
-        <video v-else-if="isVideoAttachment" :src="attachmentUrl" controls />
-        <audio v-else-if="isAudioAttachment" :src="attachmentUrl" controls />
-        <a v-else-if="isPDF || message.attachmentName" :download='message.attachmentName' :href="attachmentUrl">{{message.attachmentName}}</a>
+        <b-img fluid v-if="isImageAttachment" :src="src"/>
+        <video v-else-if="isVideoAttachment" :src="src" controls/>
+        <audio v-else-if="isAudioAttachment" :src="src" controls/>
+        <a v-else-if="isPDF || attachmentUrl" :download='message.attachmentName'
+           :href="src">{{ message.attachmentName }}</a>
     </div>
 </template>
 
@@ -11,9 +12,18 @@
 
 export default {
     props: ['message'],
+    data() {
+        return {
+            src: undefined
+        }
+    },
     computed: {
         attachmentUrl() {
+            if (this.message?.attachmentName) {
                 return `api/messages/${this.message.id}/attachment`
+            }
+            return undefined
+
         },
         isImageAttachment() {
             if (!this.attachmentUrl) return false
@@ -30,6 +40,24 @@ export default {
         isPDF() {
             if (!this.attachmentUrl) return false
             return this.message.attachmentName && /\.(pdf)$/i.test(this.message.attachmentName)
+        }
+    },
+    async mounted() {
+        try {
+            if (this.attachmentUrl) {
+                console.log(`Buscando ${this.message.id} ${this.attachmentUrl}`)
+                const response = await this.$axios.get(this.attachmentUrl, {
+                    responseType: 'blob'
+                });
+                this.src = URL.createObjectURL(response.data);
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    },
+    beforeDestroy() {
+        if (this.attachmentUrl && this.src) {
+            URL.revokeObjectURL(this.src);
         }
     }
 }

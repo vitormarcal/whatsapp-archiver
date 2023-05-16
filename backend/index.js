@@ -19,6 +19,7 @@ const chatsApi = require('./api/chat.api')
 const messagesApi = require('./api/message.api')
 const parameterApi = require('./api/parameter.api')
 const usersApi = require('./api/user.api')
+const attachmentApi = require('./api/attachment.api')
 
 const app = express();
 app.use(express.json());
@@ -28,6 +29,7 @@ app.use("/chats", auth, chatsApi)
 app.use("/messages", auth, messagesApi)
 app.use("/parameters", auth, parameterApi)
 app.use("/users", usersApi)
+app.use("/attachments", attachmentApi)
 
 
 module.exports = app

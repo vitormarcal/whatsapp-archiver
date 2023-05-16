@@ -241,7 +241,7 @@ class ChatService {
                         reject(err);
                     } else {
 
-                        resolve(dataBuffer)
+                        resolve({filePath, dataBuffer})
                     }
                 })
             });
