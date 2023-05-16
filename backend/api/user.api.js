@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const router = express.Router();
 
+const expiresIn = 1800;
+
 router.post("/signup", async (req, res) => {
     try {
         // Extract email and password from the req.body object
@@ -38,7 +40,7 @@ router.post("/signup", async (req, res) => {
                     }
                 };
                 jwt.sign(payload, "randomString", {
-                    expiresIn: 10000
+                    expiresIn: expiresIn
                 }, (err, token) => {
                     if (err) throw err;
                     res.status(200).json({
@@ -75,7 +77,7 @@ router.post("/login", async (req, res) => {
                     }
                 };
                 jwt.sign(payload, "randomString", {
-                    expiresIn: 10000
+                    expiresIn: expiresIn
                 }, (err, token) => {
                     if (err) throw err;
                     res.status(200).json({
