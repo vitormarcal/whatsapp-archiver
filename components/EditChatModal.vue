@@ -4,7 +4,7 @@
             id="modal-edit-chat"
             ref="modal"
             title="Edite o chat"
-            @show="resetModal"
+            @show="findAuthors"
             @hidden="resetModal"
             @ok="handleOk"
     >
@@ -39,7 +39,7 @@
             </b-form-group>
 
             Replace the author:
-            <b-form-select v-model="authorSelect" :options="allUniqueNames"></b-form-select>
+            <b-form-select v-model="authorSelect" :options="authors"></b-form-select>
             <b-form-group
                     label="by name"
                     label-for="author-replace-name-input"
@@ -66,7 +66,8 @@ export default {
             newAuthorName: null,
             authorSelect: null,
             newProfileImage: null,
-            newChatName: null
+            newChatName: null,
+            authors: []
         }
     },
     methods: {
@@ -84,6 +85,13 @@ export default {
                 this.$nextTick(() => {
                     this.$bvModal.hide('modal-prevent-closing')
                 })
+            })
+        },
+         async findAuthors() {
+            this.resetModal()
+            const url = `api/messages/author/chat/${this.activeChat.id}`
+            this.$axios.$get(url, {newChatName: this.newChatName}).then(response => {
+                this.authors = response.map(it => it.author)
             })
         },
         async updateChatName() {
@@ -127,12 +135,9 @@ export default {
 
 
         }
-    }
-    ,
+    },
     computed: {
-        allUniqueNames() {
-            return [...new Set(this.messages.map(it => it.author))].filter(it => it !== null)
-        }
+
     }
 }
 
