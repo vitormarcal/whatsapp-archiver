@@ -18,7 +18,7 @@
                     </template>
                     <b-dropdown-item-button v-b-modal.modal-edit-chat>Edit Chat</b-dropdown-item-button>
                     <b-dropdown-item-button v-b-modal.modal-media-gallery>View Media</b-dropdown-item-button>
-                    <b-dropdown-item-button>Exportar</b-dropdown-item-button>
+                    <b-dropdown-item-button @click="exportChat">Exportar</b-dropdown-item-button>
                     <b-dropdown-divider></b-dropdown-divider>
                     <b-dropdown-item-button variant="danger">
                         <b-icon icon="trash-fill" aria-hidden="true"></b-icon>
@@ -80,6 +80,20 @@ export default {
                 })
             }
 
+        },
+        async exportChat() {
+            const url = `api/chats/${this.activeChat.id}/export`
+            const response = await this.$axios.$get(url, { responseType: 'blob' });
+
+            const downloadLink = document.createElement('a');
+            const urlObject = window.URL.createObjectURL(response);
+            downloadLink.href = urlObject;
+
+            downloadLink.download = 'chat_export.zip';
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            window.URL.revokeObjectURL(urlObject);
         },
         async getMessages() {
             if (this.existsChat) {
