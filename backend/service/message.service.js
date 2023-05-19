@@ -35,6 +35,33 @@ class MessageService {
         return Message.findOne({where: {id}})
     }
 
+    async searchMessagesByTerm(term, limit = 100, offset = 0) {
+        try {
+            let messages = [];
+            let batch;
+
+            do {
+                batch = await Message.findAll({
+                    where: {
+                        content: {
+                            [Sequelize.Op.like]: `%${term}%`
+                        }
+                    },
+                    limit: limit,
+                    offset: offset
+                });
+
+                messages = messages.concat(batch);
+                offset += limit;
+            } while (batch.length === limit);
+
+            return messages;
+        } catch (error) {
+            console.error('Erro ao buscar mensagens:', error);
+            throw error;
+        }
+    }
+
 }
 
 
