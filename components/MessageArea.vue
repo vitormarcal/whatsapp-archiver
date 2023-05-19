@@ -1,8 +1,9 @@
 <template>
-    <div class="message-area d-none d-sm-flex flex-column col-12 col-sm-7 col-md-8 p-0 h-100" ref="chatWindow"
+    <div class="message-area d-sm-flex flex-column col-12 col-sm-7 col-md-8 p-0 h-100" :class="messageAreaClass" ref="chatWindow"
          @scroll="loadMoreMessages">
 
-        <div id="navbar" class="row d-flex flex-row align-items-center p-2 m-0" v-if="showNavBar">
+        <div id="navbar" class="row d-flex flex-row align-items-center p-2 m-0" :class="navbarClass" v-if="showNavBar">
+            <a href="#" class="h2" @click="destroyChat"><b-icon icon="arrow-left"/></a>
             <a href="#"><profile-image :chat-id="activeChat.id"/></a>
             <div class="d-flex flex-column">
                 <div class="text-white font-weight-bold" id="name">{{ this.activeChat.name }}</div>
@@ -43,7 +44,7 @@
 <script>
 
 export default {
-    props: ['activeChat', 'myName'],
+    props: ['activeChat', 'myName', 'mobile'],
     data() {
         return {
             messages: [],
@@ -63,6 +64,9 @@ export default {
     methods: {
         handleUpdateEditChat() {
             this.$emit('update:edit-chat')
+        },
+        destroyChat() {
+            this.$emit('update:destroy-chat')
         },
         async loadMoreMessages() {
             const chatWindow = this.$refs.chatWindow;
@@ -122,6 +126,18 @@ export default {
         },
         showNavBar() {
             return this.existsChat;
+        },
+        messageAreaClass() {
+            return {
+                'd-none': !this.mobile || !this.chatOpened,
+                'd-flex': this.mobile && this.chatOpened
+            }
+        },
+        navbarClass() {
+            return {'w-100':  this.mobile && this.chatOpened}
+        },
+        chatOpened() {
+            return this.activeChat?.id >= 0
         }
     },
     mounted() {
