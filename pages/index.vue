@@ -5,9 +5,14 @@
             <ChatList :chats="chats"
                       :my-name="myName"
                       :active-chat="activeChat"
+                      :mobile="isMobile"
                       v-on:update:message-area="refreshMessageArea"/>
 
-            <MessageArea :my-name="myName" :active-chat="activeChat" @update:edit-chat="handleUpdateEditChat"/>
+            <MessageArea :my-name="myName"
+                         :mobile="isMobile"
+                         :active-chat="activeChat"
+                         @update:destroy-chat="destroyChat"
+                         @update:edit-chat="handleUpdateEditChat"/>
         </div>
 
     </main>
@@ -21,10 +26,10 @@ export default {
     data() {
         return {
             myName: 'Vítor Marçal',
-            messages: [],
             activeChat: {id: -1},
             chats: [],
-            count: 0
+            count: 0,
+            isMobile: false
         }
     },
     methods: {
@@ -33,10 +38,12 @@ export default {
             const index = this.chats.findIndex(it => it.id === chat.id);
             this.activeChat = chat
             if (index !== -1) {
-                debugger
                 this.chats.splice(index, 1, chat);
             }
 
+        },
+        destroyChat() {
+            this.activeChat = {id: -1}
         },
         refreshMessageArea(activeChat) {
             this.activeChat = activeChat
@@ -47,7 +54,17 @@ export default {
             this.chats = data
             this.count = count
 
-        }
+        },
+        checkWindowSize() {
+            this.isMobile = window.innerWidth <= 575;
+        },
+    },
+    mounted() {
+        this.checkWindowSize();
+        window.addEventListener('resize', this.checkWindowSize);
+    },
+    beforeDestroy() {
+        window.removeEventListener('resize', this.checkWindowSize);
     },
     created() {
         this.getChatInfo()
