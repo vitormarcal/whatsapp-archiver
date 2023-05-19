@@ -5,6 +5,15 @@ const {ChatService, MessageService} = require('../service');
 const chatService = new ChatService();
 const messageService = new MessageService();
 
+router.post("/searchMessagesByTerm", (req, res) => {
+    const q = req.body.q
+    messageService.searchMessagesByTerm(q).then(messages => {
+        res.send(messages)
+    }).catch(error => {
+        console.error(`Erro ao buscar termos do chat ${q}`, error);
+        res.sendStatus(500);
+    });
+})
 
 router.put("/:messageId", function (req, res) {
     let messageToUpdate = req.body;
@@ -60,7 +69,7 @@ router.patch("/author", function (req, res) {
     });
 });
 
-router.get("/author/chat/:chatId", function (req, res) {
+router.get("/author/chat/:chatId", (req, res) => {
     let  chatId  = req.params.chatId;
 
     messageService.findAuthorsByChatId(chatId).then((authors) => {
