@@ -52,7 +52,7 @@ export default {
   ],
 
   auth: {
-    localStorage: true,
+    localStorage: false,
     strategies: {
       local: {
         endpoints: {
@@ -61,6 +61,7 @@ export default {
             method: 'post',
             propertyName: 'token'
           },
+          autoLogout: true,
           logout: false,
           user: {
             url: '/api/users/me',
