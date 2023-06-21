@@ -55,7 +55,6 @@ export default {
     localStorage: false,
     cookie: {
       options: {
-        maxAge: 1800
       }
     },
     strategies: {
