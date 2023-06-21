@@ -75,6 +75,7 @@ export default {
         }
       }
     },
+    resetOnError: true,
     redirect: {
       logout: '/login',
       callback: '/login',
