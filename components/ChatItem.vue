@@ -5,7 +5,7 @@
         <profile-image :chat-id="item.id"/>
         <div class="w-50">
             <div class="name">{{ item.name }}</div>
-            <div class="small">
+            <div class="small text-truncate">
                 <i class="far fa-check-circle mr-1"></i>
                 <b-icon icon="check2-all " v-if="item.lastMessage.author === myName"></b-icon>
                 {{ item.lastMessage.content }}
