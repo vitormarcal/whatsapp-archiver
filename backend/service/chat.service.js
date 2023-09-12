@@ -155,12 +155,16 @@ class ChatService {
         }
     }
 
-    async findMessagesByChatId(chatId, limit, offset) {
+    async findMessagesByChatId(chatId, limit, offset, orderParam) {
+        let order = orderParam
+        if (order !== 'asc' || order !== 'desc') {
+            order = 'desc'
+        }
         const {count, rows} = await Message.findAndCountAll({
             where: {
                 chatId: chatId
             },
-            order: [['id', 'desc']],
+            order: [['id', order]],
             limit: limit,
             offset: offset
         })

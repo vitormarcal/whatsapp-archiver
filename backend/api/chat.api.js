@@ -60,12 +60,13 @@ router.patch("/:chatId/name", function (req, res) {
 
 router.get("/:chatId/messages", function (req, res) {
     let chatId = req.params.chatId;
+    const order = req.query.order || "desc"
     const limit = parseInt(req.query.limit || 1000)
     const offset = parseInt(req.query.offset || 0)
 
     if (isNaN(limit) || isNaN(offset)) res.status(400).send("O parâmetro skip e offset precisa ser um número");
 
-    chatService.findMessagesByChatId(chatId, limit, offset).then(messages => {
+    chatService.findMessagesByChatId(chatId, limit, offset, order).then(messages => {
         if (messages) res.send(messages)
         else res.sendStatus(404)
     }).catch(error => {
