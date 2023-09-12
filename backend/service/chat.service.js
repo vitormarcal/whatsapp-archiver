@@ -155,7 +155,7 @@ class ChatService {
         }
     }
 
-    async findMessagesByChatId(chatId, limit, offset, orderParam) {
+    async findMessagesByChatId(chatId, limit, offset, orderParam = 'desc') {
         let order = orderParam
         if (order !== 'asc' || order !== 'desc') {
             order = 'desc'
