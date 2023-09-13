@@ -27,6 +27,16 @@ router.get("/force-import", function (req, res) {
     })
 });
 
+router.get("/fix-attachments-not-found", function (req, res) {
+    chatService.fixMessageAttachmentNotFound().then(saved => {
+        console.log(saved)
+        res.send(saved);
+    }).catch(e => {
+        console.log(e)
+        res.send("error");
+    })
+});
+
 router.get("/:chatId", function (req, res) {
     let chatId = req.params.chatId;
     chatService.findChat(chatId).then(chat => {

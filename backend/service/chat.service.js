@@ -30,16 +30,16 @@ class ChatService {
         return Promise.all(
             [
                 this.findChat(chatId),
-                Message.findAll({ where: { chatId: chatId }, order: [['date', 'asc']], }).then(messages => {
+                Message.findAll({where: {chatId: chatId}, order: [['date', 'asc']],}).then(messages => {
                     return messages.map(it => {
-                        const content  = it.author ? `${it.author}: ${it.content}` : it.content
+                        const content = it.author ? `${it.author}: ${it.content}` : it.content
                         const date = formatDate(it.date)
                         return `${date} - ${content}`;
                     }).join('\n')
                 })
             ]
-        ).then(([ chat, joinedMessages]) => {
-            fs.writeFileSync(chat.attachmentDir+ '/messages.txt', joinedMessages)
+        ).then(([chat, joinedMessages]) => {
+            fs.writeFileSync(chat.attachmentDir + '/messages.txt', joinedMessages)
             return this.createZipArchive(chat.attachmentDir)
         })
     }
@@ -228,6 +228,24 @@ class ChatService {
         })
     }
 
+    async fixMessageAttachmentNotFound() {
+        Chat.findAll().then(chats => {
+            chats.forEach(chat => {
+                this.findMessagesWithAttachmenty(chat.id).then(list => {
+                    list.map(({id, attachmentName}) => {
+                        const filePath = `${chat.attachmentDir}/${attachmentName}`
+                        return {id: id, exists: fs.existsSync(filePath)}
+                    }).filter(it => !it.exists)
+                        .forEach(it => Message.update({attachmentName: null}, {where: {id: it.id}})
+                            .then(() => {
+                                console.log('Registros atualizados com sucesso!');
+                            }))
+                })
+            })
+        })
+    }
+
+
     async findAttachmentBy(messageId) {
         return Message.findOne({
             where: {id: messageId},
@@ -261,7 +279,7 @@ function formatDate(date) {
     const hh = String(date.getHours()).padStart(2, "0");
     const min = String(date.getMinutes()).padStart(2, "0");
 
-    return  `${d}/${MM}/${yyyy} ${hh}:${min}`;
+    return `${d}/${MM}/${yyyy} ${hh}:${min}`;
 }
 
 
