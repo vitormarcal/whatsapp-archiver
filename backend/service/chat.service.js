@@ -39,7 +39,7 @@ class ChatService {
                 })
             ]
         ).then(([chat, joinedMessages]) => {
-            fs.writeFileSync(chat.attachmentDir + '/messages.txt', joinedMessages)
+            fs.writeFileSync(chat.attachmentDir + '/WhatsApp Messages.txt', joinedMessages)
             return this.createZipArchive(chat.attachmentDir)
         })
     }
