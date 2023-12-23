@@ -1,5 +1,7 @@
 # whatsapp-archiver
 
+This project is inactive. See https://github.com/vitormarcal/chatvault
+
 ## Build Setup
 
 ```bash
